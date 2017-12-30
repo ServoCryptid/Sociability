@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "247090439921",
+    "firebase_url": "https://sociability-943d1.firebaseio.com",
+    "project_id": "sociability-943d1",
+    "storage_bucket": "sociability-943d1.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:247090439921:android:6bbc122d2bd47029",
+        "android_client_info": {
+          "package_name": "sociability.com"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "247090439921-drlv3ebvrf356octm47ik3taf0lqfh4s.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBKhbT6M2Tu7wRYziBsmCc9Lr4TwdVcejs"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
