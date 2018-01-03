@@ -9,7 +9,7 @@ import io.realm.RealmObject;
 public class CallSample extends RealmObject {
 
     public String phoneNumber;
-    public int type ; // 0 - for OUTGOING ; 1- for INCOMING
+    public String type ; // OUTGOING INCOMING
     public String date; // format : Thu Jan 05 16:52:46 GMT+02:00 2017
     public String duration; //in seconds
 
@@ -22,11 +22,11 @@ public class CallSample extends RealmObject {
     }
 
 
-    public int getType() {
+    public String getType() {
         return type;
     }
 
-    public void setType(int type) {
+    public void setType(String type) {
         this.type = type;
     }
 

@@ -12,20 +12,25 @@ import android.provider.CallLog;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.util.Calendar;
 import java.util.Date;
 
-import Database.DatabaseOperator;
+import Database.RealmDB;
+import io.realm.Realm;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
     private TextView call;
     private StringBuffer notificationMsg;
     private static final int MY_PERMISSIONS_REQUEST_READ_CALL_LOG = 1;
     private static final int MY_PERMISSIONS_REQUEST_READ_SMS_LOG = 2;
+    private static final int MY_PERMISSIONS_REQUEST_READ_PHONE_STATE = 3;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -36,22 +41,19 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         Button b2 = (Button) findViewById(R.id.button_quiz);
         b2.setOnClickListener(this);
-     /*   Realm.init(this);
-        //Stetho.initializeWithDefaults(this);
-        Stetho.initialize(
-                Stetho.newInitializerBuilder(this)
-                        .enableDumpapp(Stetho.defaultDumperPluginsProvider(this))
-                        .enableWebKitInspector(RealmInspectorModulesProvider.builder(this).build())
-                        .build());
 
-        call = (TextView) findViewById(R.id.call);
-        notificationMsg = new StringBuffer();*/
+        Button b3 = (Button) findViewById(R.id.button_about);
+        b3.setOnClickListener(this);
+
+        Realm.init(this);
+    //    notificationMsg = new StringBuffer();*/
 
      //   LocalBroadcastManager.getInstance(this).registerReceiver(onNotice, new IntentFilter("Msg"));
-      //  requestPermissionsNeeded();
+        requestPermissionsNeeded();
 
-    //   getCallDetails();
-        // getSMSDetails();
+        // getCallDetails();
+
+         //getSMSDetails();
 
     }
 
@@ -61,12 +63,19 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         switch(v.getId()) {
             case R.id.button_show_results:
             //start the show results activity
+                Intent intent = new Intent(this, ResultsActivity.class);
+                startActivity(intent);
                 break;
             case R.id.button_quiz:
             //start QuizActivity.java
-                Intent intent = new Intent(this, QuizActivity.class);
+                intent = new Intent(this, QuizActivity.class);
                 startActivity(intent);
                 break;
+            case R.id.button_about:
+                //start AboutActivity.java
+                 intent = new Intent (this, AboutActivity.class);
+                 startActivity(intent);
+                 break;
         }
     }
 
@@ -87,6 +96,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     };
 
     private void requestPermissionsNeeded(){
+        boolean hasPermissionReadPhoneState = (ContextCompat.checkSelfPermission(getApplicationContext(),
+                Manifest.permission.READ_PHONE_STATE) == PackageManager.PERMISSION_GRANTED);
+
+        if (!hasPermissionReadPhoneState) {
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.READ_PHONE_STATE},
+                    MY_PERMISSIONS_REQUEST_READ_PHONE_STATE);
+        }
 
         boolean hasPermissionReadCallLog = (ContextCompat.checkSelfPermission(getApplicationContext(),
                 Manifest.permission.READ_CALL_LOG) == PackageManager.PERMISSION_GRANTED);
@@ -141,6 +158,20 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
                 }
                 break;
+            case MY_PERMISSIONS_REQUEST_READ_PHONE_STATE:
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    Toast.makeText(this, "Permission granted.", Toast.LENGTH_SHORT).show();
+
+                    //reload my activity with permission granted
+                    finish();
+                    startActivity(getIntent());
+
+                } else {
+                    // permission denied
+                    Toast.makeText(this, "The app was not allowed to read your phone state. Hence, it cannot function properly. Please consider granting it this permission", Toast.LENGTH_LONG).show();
+
+                }
+                break;
 
 
             // other 'case' lines to check for other
@@ -148,7 +179,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
     private void getCallDetails() {
-        DatabaseOperator db = new DatabaseOperator();
+        RealmDB db = new RealmDB();
 
         StringBuffer sb = new StringBuffer();
         Cursor cursor = getContentResolver().query( CallLog.Calls.CONTENT_URI,null, null,null, null);
@@ -160,8 +191,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         sb.append( "Call Details :");
 
-        cursor.moveToNext();
-       // while ( cursor.moveToNext() ) {
+        while ( cursor.moveToNext() ) {
             String phNumber = cursor.getString( number );
             String callType = cursor.getString( type );
             String callDate = cursor.getString( date );
@@ -185,18 +215,27 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     break;
             }
 
-            db.addCall(phNumber,0,callDayTime.toString(),callDuration);
+            //add the call in the database
+            db.setpNumber(phNumber);
+            db.setType(dir);
+            db.setDate(callDayTime.toString());
+            db.setDuration(callDuration);
 
-            sb.append( "\nPhone Number:--- "+phNumber +" \nCall Type:--- "+dir+" \nCall Date:--- "+callDayTime+" \nCall duration in sec :--- "+callDuration );
-            sb.append("\n----------------------------------");
-     //   }
+            db.updateDB();
+
+            // sb.append("\nPhone Number:--- "+phNumber +" \nCall Type:--- "+dir+" \nCall Date:--- "+callDayTime+" \nCall duration in sec :--- "+callDuration );
+            //sb.append("\n----------------------------------");
+
+           // Log.d("CALLLOG ---->",sb.toString());
+        }
 
         cursor.close();
-     //   call.setText(sb);
+
+        db.fetchdata();// for debugging purposes
     }
 
     private void getSMSDetails(){
-        //final String[] projection = {"_id", "address", "body", "type"};
+        final String[] projection = {"_id", "date", "date_sent" ,"address", "body", "type"};
 
         Cursor cursor = getContentResolver().query(Uri.parse("content://sms/inbox"), null, null, null, null);
         StringBuffer msgData = new StringBuffer();
@@ -205,10 +244,18 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             //do {
                 for(int idx=0;idx<cursor.getColumnCount();idx++)
                 {
-                    msgData.append("\t\t\t\t" + cursor.getColumnName(idx) +"\n"); // get all the columns
+                    //msgData.append("\t\t\t\t" + cursor.getColumnName(idx) +"\n"); // get all the columns
+                    if(cursor.getColumnName(idx).equals("date") || cursor.getColumnName(idx).equals("date_sent")){
+                        msgData.append(" "+cursor.getColumnName(idx) + ":");
 
-                    //msgData.append(" " + cursor.getColumnName(idx) + ":" + cursor.getString(idx));
-                    //msgData.append("\n----------------------------------");
+                        String dateInMills = cursor.getString(idx);
+                        msgData.append(millisToDate(Long.parseLong(dateInMills,10)));
+                        msgData.append("\n----------------------------------");
+                    }
+                    else {
+                        msgData.append(" " + cursor.getColumnName(idx) + ":" + cursor.getString(idx));
+                        msgData.append("\n----------------------------------");
+                    }
                 }
 
           //  } while (cursor.moveToNext());
@@ -216,7 +263,18 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             // empty box, no SMS
         }
         cursor.close();
-        call.setText(msgData);
+
+        Log.d("SMSLOG ---->",msgData.toString());
+
+    }
+
+    public static String millisToDate(long currentTime) { //todo: put this in a helper class
+        String finalDate;
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTimeInMillis(currentTime);
+        Date date = calendar.getTime();
+        finalDate = date.toString();
+        return finalDate;
     }
 
 }

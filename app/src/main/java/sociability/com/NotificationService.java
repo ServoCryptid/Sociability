@@ -26,7 +26,7 @@ public class NotificationService extends NotificationListenerService {
     }
 
     @Override
-    public void onNotificationPosted(StatusBarNotification sbn) { //TODO: ask for security notification access ?
+    public void onNotificationPosted(StatusBarNotification sbn) {
         Log.i(TAG,"onNotificationPosted: " + sbn.toString());
 
         try {

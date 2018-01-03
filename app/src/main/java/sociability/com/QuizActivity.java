@@ -1,18 +1,27 @@
 package sociability.com;
 
+import android.content.Context;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.telephony.TelephonyManager;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import Database.FirebaseDB;
+
 public class QuizActivity extends AppCompatActivity {
     private RadioGroup radioGroup;
     private Resources resources;
     private String[] quiz_questions;
+    private List<String> quiz_answers = new ArrayList<String>(10);
     private int question_number;
     private TextView current_question;
     private TextView remaining_questions_textView;
@@ -32,32 +41,31 @@ public class QuizActivity extends AppCompatActivity {
         remaining_questions_textView = findViewById(R.id.displaying_no_questions_textView);
         updateRemainingQuestionsNumber();
 
-        radioGroup = (RadioGroup) findViewById(R.id.radioGroup);
+        radioGroup = findViewById(R.id.radioGroup);
         radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
 
             @Override
             public void onCheckedChanged(RadioGroup group, int checkedId) {
                 // find which radio button is selected
-                //todo: store the info in Firebase
                 if(checkedId == R.id.radio_button_option1) {
-
+                    quiz_answers.add("1");
                 } else if(checkedId == R.id.radio_button_option2) {
-
+                    quiz_answers.add("2");
 
                 } else if(checkedId == R.id.radio_button_option3) {
-
+                    quiz_answers.add("3");
 
                 } else if(checkedId == R.id.radio_button_option4) {
-
+                    quiz_answers.add("4");
 
                 } else if(checkedId == R.id.radio_button_option5) {
-
+                    quiz_answers.add("5");
 
                 } else if(checkedId == R.id.radio_button_option6) {
+                    quiz_answers.add("6");
 
-
-                } else {
-
+                } else if(checkedId == R.id.radio_button_option7){
+                    quiz_answers.add("7");
 
                 }
             }
@@ -72,12 +80,23 @@ public class QuizActivity extends AppCompatActivity {
         }
         else {
             radioGroup.clearCheck();
+            quiz_answers.remove(question_number);
 
             question_number++;
 
-            if (question_number > MAX_NO_OF_QUESTIONS) { //we reached the last question
+            if (question_number == 1+ MAX_NO_OF_QUESTIONS) { //we reached the last question
                 Button b = findViewById(R.id.button_next);
                 b.setClickable(false);
+
+                //update the DB
+                TelephonyManager tm = (TelephonyManager)getSystemService(Context.TELEPHONY_SERVICE); // todo:put this in a helper class
+
+                FirebaseDB db = new FirebaseDB();
+                db.setQuizAnswers(quiz_answers);
+                db.setSimSerialNumber(tm.getSimSerialNumber().toString());
+                db.updateDB();
+
+
             } else {
                 current_question.setText(quiz_questions[question_number]);
                 updateRemainingQuestionsNumber();
@@ -91,4 +110,6 @@ public class QuizActivity extends AppCompatActivity {
 
         remaining_questions_textView.setText(textToDisplay);
     }
+
+
 }
