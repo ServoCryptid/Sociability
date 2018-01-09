@@ -1,5 +1,5 @@
 apply plugin: 'com.android.application'
-apply plugin: 'realm-android'
+
 android {
     compileSdkVersion 26
     buildToolsVersion "26.0.2"
@@ -17,9 +17,6 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
-    realm {
-        syncEnabled = true;
-    }
 }
 
 dependencies {
@@ -27,11 +24,12 @@ dependencies {
     implementation 'com.android.support:appcompat-v7:26.1.0'
     implementation 'com.android.support.constraint:constraint-layout:1.0.2'
 
+    // Room
+    implementation "android.arch.persistence.room:runtime:1.0.0"
+    annotationProcessor "android.arch.persistence.room:compiler:1.0.0"
+
     implementation 'com.google.firebase:firebase-core:11.4.2'
     implementation 'com.google.firebase:firebase-database:11.4.2'
-
-    implementation 'com.facebook.stetho:stetho:1.5.0'
-    implementation 'com.uphyca:stetho_realm:2.1.0'
 
     implementation 'com.android.support.constraint:constraint-layout:1.0.2'
 

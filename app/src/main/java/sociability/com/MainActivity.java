@@ -1,28 +1,19 @@
 package sociability.com;
 
 import android.Manifest;
+import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.database.Cursor;
-import android.net.Uri;
 import android.os.Bundle;
-import android.provider.CallLog;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import java.util.Calendar;
-import java.util.Date;
-
-import Database.RealmDB;
-import io.realm.Realm;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
     private TextView call;
@@ -45,15 +36,16 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         Button b3 = (Button) findViewById(R.id.button_about);
         b3.setOnClickListener(this);
 
-        Realm.init(this);
+
     //    notificationMsg = new StringBuffer();*/
 
      //   LocalBroadcastManager.getInstance(this).registerReceiver(onNotice, new IntentFilter("Msg"));
         requestPermissionsNeeded();
 
-        // getCallDetails();
+        ProgressDialog progressDialog = new ProgressDialog(this);
+        progressDialog.setMessage("We are gathering data...");
 
-         //getSMSDetails();
+        new Helper.FetchLogs(progressDialog, this).execute();
 
     }
 
@@ -177,104 +169,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             // other 'case' lines to check for other
             // permissions this app might request
         }
-    }
-    private void getCallDetails() {
-        RealmDB db = new RealmDB();
-
-        StringBuffer sb = new StringBuffer();
-        Cursor cursor = getContentResolver().query( CallLog.Calls.CONTENT_URI,null, null,null, null);
-
-        int number = cursor.getColumnIndex( CallLog.Calls.NUMBER );
-        int type = cursor.getColumnIndex( CallLog.Calls.TYPE );
-        int date = cursor.getColumnIndex( CallLog.Calls.DATE);
-        int duration = cursor.getColumnIndex( CallLog.Calls.DURATION);
-
-        sb.append( "Call Details :");
-
-        while ( cursor.moveToNext() ) {
-            String phNumber = cursor.getString( number );
-            String callType = cursor.getString( type );
-            String callDate = cursor.getString( date );
-            Date callDayTime = new Date(Long.valueOf(callDate));
-            String callDuration = cursor.getString( duration );
-            String dir = null;
-
-            int dircode = Integer.parseInt( callType );
-
-            switch( dircode ) {
-                case CallLog.Calls.OUTGOING_TYPE:
-                    dir = "OUTGOING";
-                    break;
-
-                case CallLog.Calls.INCOMING_TYPE:
-                    dir = "INCOMING";
-                    break;
-
-                case CallLog.Calls.MISSED_TYPE:
-                    dir = "MISSED";
-                    break;
-            }
-
-            //add the call in the database
-            db.setpNumber(phNumber);
-            db.setType(dir);
-            db.setDate(callDayTime.toString());
-            db.setDuration(callDuration);
-
-            db.updateDB();
-
-            // sb.append("\nPhone Number:--- "+phNumber +" \nCall Type:--- "+dir+" \nCall Date:--- "+callDayTime+" \nCall duration in sec :--- "+callDuration );
-            //sb.append("\n----------------------------------");
-
-           // Log.d("CALLLOG ---->",sb.toString());
-        }
-
-        cursor.close();
-
-        db.fetchdata();// for debugging purposes
-    }
-
-    private void getSMSDetails(){
-        final String[] projection = {"_id", "date", "date_sent" ,"address", "body", "type"};
-
-        Cursor cursor = getContentResolver().query(Uri.parse("content://sms/inbox"), null, null, null, null);
-        StringBuffer msgData = new StringBuffer();
-
-        if (cursor.moveToFirst()) { // must check the result to prevent exception
-            //do {
-                for(int idx=0;idx<cursor.getColumnCount();idx++)
-                {
-                    //msgData.append("\t\t\t\t" + cursor.getColumnName(idx) +"\n"); // get all the columns
-                    if(cursor.getColumnName(idx).equals("date") || cursor.getColumnName(idx).equals("date_sent")){
-                        msgData.append(" "+cursor.getColumnName(idx) + ":");
-
-                        String dateInMills = cursor.getString(idx);
-                        msgData.append(millisToDate(Long.parseLong(dateInMills,10)));
-                        msgData.append("\n----------------------------------");
-                    }
-                    else {
-                        msgData.append(" " + cursor.getColumnName(idx) + ":" + cursor.getString(idx));
-                        msgData.append("\n----------------------------------");
-                    }
-                }
-
-          //  } while (cursor.moveToNext());
-        } else {
-            // empty box, no SMS
-        }
-        cursor.close();
-
-        Log.d("SMSLOG ---->",msgData.toString());
-
-    }
-
-    public static String millisToDate(long currentTime) { //todo: put this in a helper class
-        String finalDate;
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTimeInMillis(currentTime);
-        Date date = calendar.getTime();
-        finalDate = date.toString();
-        return finalDate;
     }
 
 }

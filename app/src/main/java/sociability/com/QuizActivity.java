@@ -5,7 +5,6 @@ import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.telephony.TelephonyManager;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.RadioGroup;
@@ -15,7 +14,7 @@ import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.List;
 
-import Database.FirebaseDB;
+import Databases.FirebaseDB;
 
 public class QuizActivity extends AppCompatActivity {
     private RadioGroup radioGroup;
