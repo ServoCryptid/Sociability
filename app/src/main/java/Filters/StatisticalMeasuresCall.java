@@ -8,8 +8,8 @@ import java.util.List;
 
 public class StatisticalMeasuresCall extends StatisticalMeasures{
 
-    public static  double averageDuration(List<String> callDurations){ // the call duration is measured in seconds
-        int totalDuration = 0;
+    public static  double averageDuration(List<String> callDurations){ // the call duration is returned in minutes
+        double totalDuration = 0;
         String temp;
 
         for(int i = 0;i<callDurations.size();i++){
@@ -17,11 +17,11 @@ public class StatisticalMeasuresCall extends StatisticalMeasures{
             totalDuration += Integer.parseInt(temp);
         }
 
-        return totalDuration/callDurations.size();
+        return totalDuration/(callDurations.size()*60);
     }
 
-    public static double totalDuration(List<String> callDurations){ // the call duration is measured in seconds
-        int totalDuration = 0;
+    public static double totalDuration(List<String> callDurations){ // the call duration is returned in minutes
+        double totalDuration = 0;
         String temp;
 
         for(int i = 0;i<callDurations.size();i++){
@@ -29,6 +29,6 @@ public class StatisticalMeasuresCall extends StatisticalMeasures{
             totalDuration += Integer.parseInt(temp);
         }
 
-        return totalDuration;
+        return totalDuration/60;
     }
 }

@@ -13,9 +13,11 @@ import java.util.Date;
 import java.util.List;
 
 import Databases.ROOM.AppDatabase;
+import Databases.ROOM.CALL;
 import Databases.ROOM.SMS;
 import Entities.CallSample;
 import Entities.SMSSample;
+import Filters.StatisticalMeasuresCall;
 import Filters.StatisticalMeasuresSMS;
 
 /**
@@ -24,7 +26,7 @@ import Filters.StatisticalMeasuresSMS;
 
 public class FetchLogs extends AsyncTask<Void, Void, Void> {
     //todo: create a structure for the helper methods + add them here
-
+    private AppDatabase db;
     private ProgressDialog mProgressDialog;
     private Context mContext;
 
@@ -38,9 +40,14 @@ public class FetchLogs extends AsyncTask<Void, Void, Void> {
     }
 
     public Void doInBackground(Void... args){
-       // getCallDetails();
-        getSMSDetails();
+        db =  AppDatabase.getAppDatabase(mContext); //get my ROOM database instance //todo: see where you should close the db
 
+        if(db.smsDao().countPhoneNumbers()==0) // read the sms log once
+             getSMSDetails();
+
+
+        if(db.callDao().countPhoneNumbers()==0)
+            getCallDetails();
         return null;
     }
 
@@ -59,7 +66,6 @@ public class FetchLogs extends AsyncTask<Void, Void, Void> {
         int date = cursor.getColumnIndex( CallLog.Calls.DATE);
         int duration = cursor.getColumnIndex( CallLog.Calls.DURATION);
 
-        sb.append( "Call Details :");
 
         while ( cursor.moveToNext() ) {
             String phNumber = cursor.getString( number );
@@ -96,13 +102,11 @@ public class FetchLogs extends AsyncTask<Void, Void, Void> {
                 callList.add(call);
             }
 
-            //todo:add the call in the database
-
-
-            // Log.d("CALLLOG ---->",sb.toString());
         }
-
         cursor.close();
+
+        callList = checkForZeroCall(callList);
+        applyCallStatistics(callList);
     }
 
     private void getSMSDetails(){
@@ -143,22 +147,16 @@ public class FetchLogs extends AsyncTask<Void, Void, Void> {
                     smsSent.add(temp);
                 }
 
+
             } while (cursor.moveToNext());
         } else {
             // empty box, no SMS
         }
         cursor.close();
 
-        applyStatistics(smsSent);
-/*
-        for(int i=0;i<smsSent.size();i++){ //see the content of smsSent
-            SMSSample s = smsSent.get(i);
-            Log.d("NUMBER:",s.getPhoneNumber()+"\n");
-            Log.d("SMS SENT: ",s.getSmsBody().toString()+"\n\n\n");
-            Log.d("NUMBER OF CONTACTS:",smsSent.size()+"");
+        smsSent = checkForZeroMessages(smsSent); //in order to delete the records with numbers and no messages
+        applySMSStatistics(smsSent);
 
-        }
-*/
     }
 
     public int checkIfObjExists(List<SMSSample> list, SMSSample sample){ // check if the number is already in the list //todo: change this (duplicate code)
@@ -186,24 +184,65 @@ public class FetchLogs extends AsyncTask<Void, Void, Void> {
         return -1;
     }
 
-    public void applyStatistics(List<SMSSample> list){// todo: store in ROOM
-        AppDatabase db =  AppDatabase.getAppDatabase(mContext); //get my ROOM database instance
-        SMS sms = new SMS();
-        SMSSample tempSMSSample;
-        List<String> tempSMSList;
-
-        for(int i=0 ; i<list.size();i++){
-            tempSMSSample = list.get(i);
-            tempSMSList = tempSMSSample.getSmsBody();
-
-            sms.setPhoneNumber(tempSMSSample.phoneNumber);
-            sms.setAvgSMSLength(StatisticalMeasuresSMS.averageMessageLength(tempSMSList));
-            sms.setAvgWordLength(StatisticalMeasuresSMS.averageWordLength(tempSMSList));
-            sms.setMedianWordLength(StatisticalMeasuresSMS.medianWordLength(tempSMSList));
-
-          //  db.smsDao().insertAll(sms);
+    public List<SMSSample> checkForZeroMessages(List<SMSSample> list){//todo: duplicate code. change it
+        List<SMSSample> newList ;
+        newList = list;
+        for(int i=0;i<list.size();i++){
+            SMSSample temp = list.get(i);
+            if(temp.smsBody.size()==0) {
+                newList.remove(i);
+                i--;
+            }
         }
 
+        return newList;
+    }
+
+    public List<CallSample> checkForZeroCall(List<CallSample> list){ //todo: duplicate code. change it
+        List<CallSample> newList ;
+        newList = list;
+        for(int i=0;i<list.size();i++){
+            CallSample temp = list.get(i);
+            if(temp.callDurations.size()==0) {
+                newList.remove(i);
+                i--;
+            }
+        }
+
+        return newList;
+    }
+
+    public void applySMSStatistics(List<SMSSample> list){
+        SMSSample tempSMSSample;
+
+        for(int i=0 ; i<list.size();i++){
+            SMS sms = new SMS();
+            tempSMSSample = list.get(i);
+
+            sms.setPhoneNumber(tempSMSSample.phoneNumber);
+            sms.setAvgSMSLength(StatisticalMeasuresSMS.averageMessageLength(tempSMSSample.getSmsBody()));
+            sms.setAvgWordLength(StatisticalMeasuresSMS.averageWordLength(tempSMSSample.getSmsBody()));
+            sms.setMedianWordLength(StatisticalMeasuresSMS.medianWordLength(tempSMSSample.getSmsBody()));
+
+           db.smsDao().insertAll(sms);
+          // db.smsDao().delete(sns);
+        }
+    }
+
+    public void applyCallStatistics (List<CallSample> list){
+        CallSample tempCallSample;
+
+        for(int i = 0;i<list.size();i++){
+            CALL call = new CALL();
+            tempCallSample = list.get(i);
+
+            call.setPhoneNumber(tempCallSample.phoneNumber);
+            call.setAvgDuration(StatisticalMeasuresCall.averageDuration(tempCallSample.getCallDurations()));
+            call.setTotalDuration(StatisticalMeasuresCall.totalDuration(tempCallSample.getCallDurations()));
+
+            db.callDao().insertAll(call);
+           // db.callDao().delete(call);
+        }
     }
 
     public static String millisToDate(long currentTime) { //todo: put this in a helper class

@@ -11,12 +11,18 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import java.util.ArrayList;
+import java.util.List;
+
+import Databases.ROOM.AppDatabase;
+import Databases.ROOM.CALL;
+import Databases.ROOM.SMS;
 
 public class ResultsActivity extends AppCompatActivity implements View.OnClickListener {
     private RecyclerView mRecyclerView;
     private RecyclerView.Adapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
     private ArrayList<String> myData = new ArrayList<String>();
+    private AppDatabase db;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,20 +34,38 @@ public class ResultsActivity extends AppCompatActivity implements View.OnClickLi
 
         Button bSMS = (Button) findViewById(R.id.statisticsSMSButton);
         bSMS.setOnClickListener(this);
+
+        db =  AppDatabase.getAppDatabase(this); //get my ROOM database instance
+
     }
 
     @Override
     public void onClick(View v){
         switch(v.getId()){
             case R.id.statisticsCallButton:
+                myData.clear();
                 //set the recycle view with the call stats from Room DB
-                myData.add("bla");
-                myData.add("hhhhhh");
+                List<CALL> dbCALL;
+
+                dbCALL = db.callDao().getAll();
+
+                for(int i = 0 ; i<dbCALL.size();i++){
+                    myData.add(dbCALL.get(i).toString());
+                }
                 setUpRecycleView();
                 break;
+
             case R.id.statisticsSMSButton:
+                myData.clear();
                 //set the recycle view with the SMS stats from Room DB
-                myData.remove(1);
+
+                List<SMS> dbSMS;
+                dbSMS = db.smsDao().getAll();
+
+                for(int i = 0 ; i<dbSMS.size();i++){
+                    myData.add(dbSMS.get(i).toString());
+                }
+
                 setUpRecycleView();
                 break;
         }
@@ -50,6 +74,7 @@ public class ResultsActivity extends AppCompatActivity implements View.OnClickLi
     private void setUpRecycleView(){
 
         mRecyclerView = (RecyclerView) findViewById(R.id.my_recycler_view);
+        mRecyclerView.setVerticalScrollBarEnabled(true);
         //use a linear layout manager
         mLayoutManager = new LinearLayoutManager(this);
         mRecyclerView.setLayoutManager(mLayoutManager);
@@ -59,8 +84,6 @@ public class ResultsActivity extends AppCompatActivity implements View.OnClickLi
         mRecyclerView.setAdapter(mAdapter);
 
     }
-
-
 }
 
 class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {

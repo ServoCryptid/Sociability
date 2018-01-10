@@ -15,12 +15,13 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
     private TextView call;
     private StringBuffer notificationMsg;
-    private static final int MY_PERMISSIONS_REQUEST_READ_CALL_LOG = 1;
-    private static final int MY_PERMISSIONS_REQUEST_READ_SMS_LOG = 2;
-    private static final int MY_PERMISSIONS_REQUEST_READ_PHONE_STATE = 3;
+    private static final int MY_PERMISSIONS_REQUESTS = 333;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,16 +37,16 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         Button b3 = (Button) findViewById(R.id.button_about);
         b3.setOnClickListener(this);
 
-
     //    notificationMsg = new StringBuffer();*/
-
      //   LocalBroadcastManager.getInstance(this).registerReceiver(onNotice, new IntentFilter("Msg"));
-        requestPermissionsNeeded();
 
-        ProgressDialog progressDialog = new ProgressDialog(this);
-        progressDialog.setMessage("We are gathering data...");
+           if( checkAndRequestPermissions()){
+            //If you have already permitted the permission
+               ProgressDialog progressDialog = new ProgressDialog(this);
+               progressDialog.setMessage("We are gathering data...");
 
-        new Helper.FetchLogs(progressDialog, this).execute();
+               new Helper.FetchLogs(progressDialog, this).execute();
+        }
 
     }
 
@@ -87,88 +88,57 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
     };
 
-    private void requestPermissionsNeeded(){
-        boolean hasPermissionReadPhoneState = (ContextCompat.checkSelfPermission(getApplicationContext(),
-                Manifest.permission.READ_PHONE_STATE) == PackageManager.PERMISSION_GRANTED);
-
-        if (!hasPermissionReadPhoneState) {
-            ActivityCompat.requestPermissions(this,
-                    new String[]{Manifest.permission.READ_PHONE_STATE},
-                    MY_PERMISSIONS_REQUEST_READ_PHONE_STATE);
-        }
-
+    private boolean checkAndRequestPermissions(){
         boolean hasPermissionReadCallLog = (ContextCompat.checkSelfPermission(getApplicationContext(),
                 Manifest.permission.READ_CALL_LOG) == PackageManager.PERMISSION_GRANTED);
-
-        if (!hasPermissionReadCallLog) {
-            ActivityCompat.requestPermissions(this,
-                    new String[]{Manifest.permission.READ_CALL_LOG},
-                    MY_PERMISSIONS_REQUEST_READ_CALL_LOG);
-        }
 
         boolean hasPermissionReadSMSLog = (ContextCompat.checkSelfPermission(getApplicationContext(),
                 Manifest.permission.READ_SMS) == PackageManager.PERMISSION_GRANTED);
 
-        if (!hasPermissionReadSMSLog) {
-            ActivityCompat.requestPermissions(this,
-                    new String[]{Manifest.permission.READ_SMS},
-                    MY_PERMISSIONS_REQUEST_READ_SMS_LOG);
+        List<String> listPermissionsNeeded = new ArrayList<>();
+        if (!hasPermissionReadCallLog) {
+            listPermissionsNeeded.add(Manifest.permission.READ_CALL_LOG);
         }
+
+        if (!hasPermissionReadSMSLog) {
+            listPermissionsNeeded.add(Manifest.permission.READ_SMS);
+        }
+        if (!listPermissionsNeeded.isEmpty()) {
+            ActivityCompat.requestPermissions(this,
+                    listPermissionsNeeded.toArray(new String[listPermissionsNeeded.size()]), MY_PERMISSIONS_REQUESTS);
+            return false;
+        }
+        return true;
     }
 
     @Override
     public void onRequestPermissionsResult(int requestCode,
                                            String permissions[], int[] grantResults) {
         switch (requestCode) {
-            case MY_PERMISSIONS_REQUEST_READ_CALL_LOG:
+            case MY_PERMISSIONS_REQUESTS:
                 // If request is cancelled, the result arrays are empty.
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    Toast.makeText(this, "Permission granted.", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, "Permissions granted.", Toast.LENGTH_SHORT).show();
 
-                    //reload my activity with permission granted
-                    finish();
-                    startActivity(getIntent());
 
                 } else {
                     // permission denied
-                    Toast.makeText(this, "The app was not allowed to read your call log. Hence, it cannot function properly. Please consider granting it this permission", Toast.LENGTH_LONG).show();
+                    Toast.makeText(this, "The app was not allowed the permissions it needs . Hence, it cannot function properly. Please consider granting it this permission", Toast.LENGTH_LONG).show();
 
                 }
                 break;
 
-            case MY_PERMISSIONS_REQUEST_READ_SMS_LOG:
-                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    Toast.makeText(this, "Permission granted.", Toast.LENGTH_SHORT).show();
-
-                    //reload my activity with permission granted
-                    finish();
-                    startActivity(getIntent());
-
-                } else {
-                    // permission denied
-                    Toast.makeText(this, "The app was not allowed to get your SMS log. Hence, it cannot function properly. Please consider granting it this permission", Toast.LENGTH_LONG).show();
-
-                }
-                break;
-            case MY_PERMISSIONS_REQUEST_READ_PHONE_STATE:
-                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    Toast.makeText(this, "Permission granted.", Toast.LENGTH_SHORT).show();
-
-                    //reload my activity with permission granted
-                    finish();
-                    startActivity(getIntent());
-
-                } else {
-                    // permission denied
-                    Toast.makeText(this, "The app was not allowed to read your phone state. Hence, it cannot function properly. Please consider granting it this permission", Toast.LENGTH_LONG).show();
-
-                }
-                break;
-
-
-            // other 'case' lines to check for other
-            // permissions this app might request
         }
+        //restart activity with the permissions granted
+        finish();
+        startActivity(getIntent());
+    }
+
+    @Override
+    protected void onDestroy(){
+        // call the superclass method first
+        super.onDestroy();
+
     }
 
 }
