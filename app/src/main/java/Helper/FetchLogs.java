@@ -6,12 +6,15 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.provider.CallLog;
+import android.telephony.TelephonyManager;
 
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 
+import Databases.FirebaseDB;
 import Databases.ROOM.AppDatabase;
 import Databases.ROOM.CALL;
 import Databases.ROOM.SMS;
@@ -29,6 +32,9 @@ public class FetchLogs extends AsyncTask<Void, Void, Void> {
     private AppDatabase db;
     private ProgressDialog mProgressDialog;
     private Context mContext;
+    TelephonyManager tm;
+
+    FirebaseDB fdb = new FirebaseDB();
 
     public FetchLogs(ProgressDialog pD, Context c){
         this.mProgressDialog = pD;
@@ -40,6 +46,8 @@ public class FetchLogs extends AsyncTask<Void, Void, Void> {
     }
 
     public Void doInBackground(Void... args){
+        tm = (TelephonyManager)mContext.getSystemService(Context.TELEPHONY_SERVICE);
+
         db =  AppDatabase.getAppDatabase(mContext); //get my ROOM database instance //todo: see where you should close the db
 
         if(db.smsDao().countPhoneNumbers()==0) // read the sms log once
@@ -92,6 +100,8 @@ public class FetchLogs extends AsyncTask<Void, Void, Void> {
                     break;
             }
 
+            if(phNumber.contains("+4"))
+                phNumber = phNumber.substring(2);
             CallSample call = new CallSample(phNumber);
             index = checkIfNumberExists(callList,call);
 
@@ -212,8 +222,12 @@ public class FetchLogs extends AsyncTask<Void, Void, Void> {
         return newList;
     }
 
-    public void applySMSStatistics(List<SMSSample> list){
+    public void applySMSStatistics(List<SMSSample> list){ // changed temporary to compute the overall sms statistics (for the contest)
         SMSSample tempSMSSample;
+        double overallAverageSMSLength = 0;
+        double overallMedianWordLength = 0;
+        double overallAverageWordLength = 0;
+        HashMap<String,Double> sms_stats = new HashMap<String,Double>();
 
         for(int i=0 ; i<list.size();i++){
             SMS sms = new SMS();
@@ -224,13 +238,33 @@ public class FetchLogs extends AsyncTask<Void, Void, Void> {
             sms.setAvgWordLength(StatisticalMeasuresSMS.averageWordLength(tempSMSSample.getSmsBody()));
             sms.setMedianWordLength(StatisticalMeasuresSMS.medianWordLength(tempSMSSample.getSmsBody()));
 
-           db.smsDao().insertAll(sms);
-          // db.smsDao().delete(sns);
+            overallAverageSMSLength += StatisticalMeasuresSMS.averageMessageLength(tempSMSSample.getSmsBody());
+            overallAverageWordLength += StatisticalMeasuresSMS.averageWordLength(tempSMSSample.getSmsBody());
+            overallMedianWordLength += StatisticalMeasuresSMS.medianWordLength(tempSMSSample.getSmsBody());
+
+            db.smsDao().insertAll(sms);
+           //db.smsDao().delete(sms);
         }
+
+        overallAverageSMSLength = overallAverageSMSLength/ list.size();
+        sms_stats.put("Average SMS length",overallAverageSMSLength);
+
+        overallAverageWordLength = overallAverageWordLength /list.size();
+        sms_stats.put("Average word length",overallAverageWordLength );
+
+        overallMedianWordLength = overallMedianWordLength/ list.size();
+        sms_stats.put("Median word length",overallMedianWordLength);
+
+        fdb.setSimSerialNumber(tm.getSimSerialNumber().toString());
+        fdb.updateStatsToDB(sms_stats);
     }
 
-    public void applyCallStatistics (List<CallSample> list){
+    public void applyCallStatistics (List<CallSample> list){// changed temporary to compute the overall sms statistics (for the contest)
         CallSample tempCallSample;
+        double overallAverageDuration = 0;
+        double oversallTotalDuration = 0;
+
+        HashMap<String,Double> call_stats = new HashMap<String,Double>();
 
         for(int i = 0;i<list.size();i++){
             CALL call = new CALL();
@@ -240,9 +274,19 @@ public class FetchLogs extends AsyncTask<Void, Void, Void> {
             call.setAvgDuration(StatisticalMeasuresCall.averageDuration(tempCallSample.getCallDurations()));
             call.setTotalDuration(StatisticalMeasuresCall.totalDuration(tempCallSample.getCallDurations()));
 
+            overallAverageDuration += StatisticalMeasuresCall.averageDuration(tempCallSample.getCallDurations());
+            oversallTotalDuration += StatisticalMeasuresCall.totalDuration(tempCallSample.getCallDurations());
+
             db.callDao().insertAll(call);
            // db.callDao().delete(call);
         }
+        overallAverageDuration = oversallTotalDuration/list.size();
+
+        call_stats.put("Average call duration",overallAverageDuration);
+        call_stats.put("Total call duration", oversallTotalDuration);
+
+        fdb.setSimSerialNumber(tm.getSimSerialNumber().toString());
+        fdb.updateStatsToDB(call_stats);
     }
 
     public static String millisToDate(long currentTime) { //todo: put this in a helper class

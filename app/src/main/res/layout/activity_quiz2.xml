@@ -23,6 +23,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
     <TextView
         android:id="@+id/question_textView"
         android:layout_width="wrap_content"
@@ -50,49 +51,35 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent">
 
-
         <RadioButton
             android:id="@+id/radio_button_option1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/option1_text_quiz1" />
+            android:text="@string/option1_text_quiz2" />
 
         <RadioButton
             android:id="@+id/radio_button_option2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/option2_text_quiz1" />
+            android:text="@string/option2_text_quiz2" />
 
         <RadioButton
             android:id="@+id/radio_button_option3"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/option3_text_quiz1" />
+            android:text="@string/option3_text_quiz2" />
 
         <RadioButton
             android:id="@+id/radio_button_option4"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/option4_text_quiz1" />
+            android:text="@string/option4_text_quiz2" />
 
         <RadioButton
             android:id="@+id/radio_button_option5"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/option5_text_quiz1" />
-
-        <RadioButton
-            android:id="@+id/radio_button_option6"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/option6_text_quiz1" />
-
-        <RadioButton
-            android:id="@+id/radio_button_option7"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/option7_text_quiz1" />
-
+            android:text="@string/option5_text_quiz2" />
 
     </RadioGroup>
 
@@ -104,6 +91,7 @@
         android:layout_marginStart="8dp"
         android:layout_marginTop="72dp"
         android:text="Next question"
+        android:onClick="nextQuestion"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.789"
         app:layout_constraintStart_toEndOf="@+id/displaying_no_questions_textView"

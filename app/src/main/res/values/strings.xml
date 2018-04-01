@@ -1,30 +1,28 @@
 <resources>
     <string name="app_name">Sociability</string>
 
-    <!-- Strings for MainActivity-->
-    <string name="show_results_button_name"> Show results</string>
+    <!-- Strings FirstScreenActivityvity-->
+    <string name="show_results_button_name"> Show statistics</string>
     <string name="take_quiz_button_name"> Take quiz</string>
 
-    <!-- Strings for QuizActivity-->
-    <string name="option1_text"> Disagree strongly </string>
-    <string name="option2_text"> Disagree moderately </string>
-    <string name="option3_text"> Disagree a little </string>
-    <string name="option4_text"> Neither agree nor disagree </string>
-    <string name="option5_text"> Agree a little </string>
-    <string name="option6_text"> Agree moderately</string>
-    <string name="option7_text"> Agree strongly </string>
+    <!-- Strings for short quiz-->
+    <string name="option1_text_quiz1"> Disagree strongly </string>
+    <string name="option2_text_quiz1"> Disagree moderately </string>
+    <string name="option3_text_quiz1"> Disagree a little </string>
+    <string name="option4_text_quiz1"> Neither agree nor disagree </string>
+    <string name="option5_text_quiz1"> Agree a little </string>
+    <string name="option6_text_quiz1"> Agree moderately</string>
+    <string name="option7_text_quiz1"> Agree strongly </string>
 
-    <string-array name="quiz_questions">
-        <item> I see myself as extraverted, enthusiastic.</item>
-        <item> I see myself as critical, quarrelsome.</item>
-        <item> I see myself as dependable, self-disciplined.</item>
-        <item> I see myself as anxious, easily upset.</item>
-        <item> I see myself as open to new experiences, complex.</item>
-        <item> I see myself as reserved, quiet.</item>
-        <item> I see myself as sympathetic, warm.</item>
-        <item> I see myself as disorganized, careless.</item>
-        <item> I see myself as calm, emotionally stable.</item>
-        <item> I see myself as conventional, uncreative.</item>
-    </string-array>
+    <!-- Strings for long quiz-->
+    <string name="option1_text_quiz2">Very Inaccurate </string>
+    <string name="option2_text_quiz2"> Moderately Inaccurate</string>
+    <string name="option3_text_quiz2"> Neither Accurate Nor Inaccurate </string>
+    <string name="option4_text_quiz2"> Moderately Accurate </string>
+    <string name="option5_text_quiz2"> Very Accurate </string>
+
+
     <string name="title_activity_about">AboutActivity</string>
+    <string name="title_activity_dummy">Dummy</string>
+    <string name="title_activity_main">MainActivity</string>
 </resources>

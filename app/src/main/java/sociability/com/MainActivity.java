@@ -1,107 +1,73 @@
 package sociability.com;
 
-import android.Manifest;
 import android.app.ProgressDialog;
-import android.content.BroadcastReceiver;
-import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.CardView;
 import android.view.View;
-import android.widget.Button;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
-    private TextView call;
-    private StringBuffer notificationMsg;
     private static final int MY_PERMISSIONS_REQUESTS = 333;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        Button b1 = (Button) findViewById(R.id.button_show_results);
-        b1.setOnClickListener(this);
+        CardView cv1 = findViewById(R.id.cv1);
+        cv1.setOnClickListener(this);
 
-        Button b2 = (Button) findViewById(R.id.button_quiz);
-        b2.setOnClickListener(this);
+        CardView cv2 = findViewById(R.id.cv2);
+        cv2.setOnClickListener(this);
 
-        Button b3 = (Button) findViewById(R.id.button_about);
-        b3.setOnClickListener(this);
-
-    //    notificationMsg = new StringBuffer();*/
-     //   LocalBroadcastManager.getInstance(this).registerReceiver(onNotice, new IntentFilter("Msg"));
-
-           if( checkAndRequestPermissions()){
+        if( checkAndRequestPermissions()){
             //If you have already permitted the permission
-               ProgressDialog progressDialog = new ProgressDialog(this);
-               progressDialog.setMessage("We are gathering data...");
+            ProgressDialog progressDialog = new ProgressDialog(this);
+            progressDialog.setMessage("We are gathering data...");
 
-               new Helper.FetchLogs(progressDialog, this).execute();
+            new Helper.FetchLogs(progressDialog, this).execute();
         }
-
     }
 
     @Override
-    public void onClick(View v) {
-        // Perform action on click
-        switch(v.getId()) {
-            case R.id.button_show_results:
-            //start the show results activity
-                Intent intent = new Intent(this, ResultsActivity.class);
+    public void onClick(View v){
+        Intent intent = new Intent(this, QuizActivity.class);
+
+        switch(v.getId()){
+            case R.id.cv1:
+                //open quiz1
+                intent.putExtra("message", "short quiz");
                 startActivity(intent);
                 break;
-            case R.id.button_quiz:
-            //start QuizActivity.java
-                intent = new Intent(this, QuizActivity.class);
+            case R.id.cv2:
+                //open quiz2
+                intent.putExtra("message", "long quiz");
                 startActivity(intent);
                 break;
-            case R.id.button_about:
-                //start AboutActivity.java
-                 intent = new Intent (this, AboutActivity.class);
-                 startActivity(intent);
-                 break;
         }
     }
 
-    private BroadcastReceiver onNotice = new BroadcastReceiver() {
-
-        @Override
-        public void onReceive(Context context, Intent intent) {
-
-            String pack = intent.getStringExtra("package");
-            String title = intent.getStringExtra("title");
-            String text = intent.getStringExtra("text");
-
-            notificationMsg.append(pack + "\n" + title + "\n" + text + "\n\n");
-
-            call.setText(notificationMsg);
-
-        }
-    };
-
     private boolean checkAndRequestPermissions(){
         boolean hasPermissionReadCallLog = (ContextCompat.checkSelfPermission(getApplicationContext(),
-                Manifest.permission.READ_CALL_LOG) == PackageManager.PERMISSION_GRANTED);
+                android.Manifest.permission.READ_CALL_LOG) == PackageManager.PERMISSION_GRANTED);
 
         boolean hasPermissionReadSMSLog = (ContextCompat.checkSelfPermission(getApplicationContext(),
-                Manifest.permission.READ_SMS) == PackageManager.PERMISSION_GRANTED);
+                android.Manifest.permission.READ_SMS) == PackageManager.PERMISSION_GRANTED);
 
         List<String> listPermissionsNeeded = new ArrayList<>();
         if (!hasPermissionReadCallLog) {
-            listPermissionsNeeded.add(Manifest.permission.READ_CALL_LOG);
+            listPermissionsNeeded.add(android.Manifest.permission.READ_CALL_LOG);
         }
 
         if (!hasPermissionReadSMSLog) {
-            listPermissionsNeeded.add(Manifest.permission.READ_SMS);
+            listPermissionsNeeded.add(android.Manifest.permission.READ_SMS);
         }
         if (!listPermissionsNeeded.isEmpty()) {
             ActivityCompat.requestPermissions(this,
@@ -133,12 +99,4 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         finish();
         startActivity(getIntent());
     }
-
-    @Override
-    protected void onDestroy(){
-        // call the superclass method first
-        super.onDestroy();
-
-    }
-
 }
