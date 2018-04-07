@@ -1,55 +1,55 @@
 package sociability.com;
 
-import android.content.Context;
-import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.telephony.TelephonyManager;
 import android.view.View;
 import android.widget.Button;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
-import Databases.FirebaseDB;
-import Databases.FirebaseQuizzes;
+import static sociability.com.ResultsActivity.getShortQuizResults;
 
 public class QuizActivity extends AppCompatActivity {
-    private RadioGroup radioGroup;
-    private static ArrayList<String> quiz_questions;
     public static ArrayList<String> quiz_questions_short;
     public static ArrayList<String> quiz_questions_long;
+    private static ArrayList<String> quiz_questions;
     private List<Integer> quiz_answers = new ArrayList<Integer>(10);
     private int question_number;
+    private static int MAX_NO_OF_QUESTIONS ;
+    private RadioGroup radioGroup;
     private TextView current_question;
     private TextView remaining_questions_textView;
     private Button button_next_question;
     private TextView endingMessage;
-    private static int MAX_NO_OF_QUESTIONS ;
+    private String quizType; //"short quiz" or "long quiz"
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        Bundle bundle = getIntent().getExtras();
-        String message = bundle.getString("message");
+        quiz_answers.clear(); //clear the list of quiz answers
 
-        if(message.equals("short quiz")) {
+        //region Get the selected quiz type from the calling activity
+        Bundle bundle = getIntent().getExtras();
+        quizType = bundle.getString("message");
+
+        if(quizType.equals("short quiz")) {
             setContentView(R.layout.activity_quiz);
             quiz_questions = quiz_questions_short;
             MAX_NO_OF_QUESTIONS = quiz_questions.size();
 
         }
-        else if(message.equals("long quiz")){
+        else if(quizType.equals("long quiz")){
             setContentView(R.layout.activity_quiz2);
             quiz_questions = quiz_questions_long;
             MAX_NO_OF_QUESTIONS = quiz_questions.size();
 
         }
+        //endregion
 
         question_number = 1 ; //the quiz starts with the first question
         current_question = findViewById(R.id.question_textView);
@@ -71,7 +71,7 @@ public class QuizActivity extends AppCompatActivity {
 
                     if (question_number ==  MAX_NO_OF_QUESTIONS) { //we reached the last question
                         showEndingMessage();
-                        getQuizResults();
+                        getShortQuizResults(quiz_answers);
 
                     } else {
                         current_question.setText(quiz_questions.get(question_number));
@@ -124,7 +124,11 @@ public class QuizActivity extends AppCompatActivity {
         button_next_question.setVisibility(View.INVISIBLE);
         remaining_questions_textView.setVisibility(View.INVISIBLE);
 
+        if(quizType.equals("long quiz"))
+            endingMessage.setText(ResultsActivity.getLongQuizScore(quiz_answers));
+
         endingMessage.setVisibility(View.VISIBLE);
+
     }
 
     private void updateRemainingQuestionsNumber(){
@@ -132,75 +136,6 @@ public class QuizActivity extends AppCompatActivity {
         String textToDisplay = number +"/"+ (MAX_NO_OF_QUESTIONS-1);
 
         remaining_questions_textView.setText(textToDisplay);
-    }
-
-    private void getQuizResults(){
-        int reversed [] = {7,6,5,4,3,2,1};
-        HashMap <String,String> results = new HashMap<String,String>();
-
-        double O=0;
-        double C=0;
-        double E=0;
-        double A=0;
-        double N=0;
-
-        O = (quiz_answers.get(4) + reversed[quiz_answers.get(9)-1])/2;
-        if(0 <= O && O<=4.30)
-            results.put("openness"," - Low");
-        else
-            if(4.31<=O && O <=6.44)
-                results.put("openness","- Medium");
-            else
-                if(6.45<=O && O<=7.00)
-                    results.put("openness"," - High");
-
-        C = (quiz_answers.get(2) + reversed[quiz_answers.get(7)-1])/2;
-        if(0 <= C && C<=4.07)
-            results.put("conscientiousness "," - Low");
-        else
-        if(4.08<=C && C <=6.71)
-            results.put("conscientiousness"," -  Medium");
-        else
-        if(6.72<=C && C<=7.00)
-            results.put("conscientiousness"," - High");
-
-        E = (double)(quiz_answers.get(0) + reversed[quiz_answers.get(5)-1])/2;
-        if(0 <= E && E<=2.98)
-            results.put("extraversion "," - Low");
-        else
-            if(2.99<=E && E <=5.88)
-             results.put("extraversion"," -  Medium");
-            else
-            if(5.89<=E && E<=7.00)
-                results.put("extraversion"," - High");
-
-        A = (quiz_answers.get(6) + reversed[quiz_answers.get(1)-1])/2;
-        if(0 <= A && A<=4.11)
-            results.put("agreeableness "," - Low");
-        else
-            if(4.12<=A && A <=6.33)
-                results.put("agreeableness "," -  Medium");
-            else
-            if(6.34<=A && A<=7.00)
-                results.put("agreeableness "," - High");
-
-        N = (quiz_answers.get(3) + reversed[quiz_answers.get(8)-1])/2;
-        if(0 <= N && N<=3.40)
-            results.put("neuroticism "," - Low");
-        else
-            if(3.41<=N && N <=6.24)
-                results.put("neuroticism "," -  Medium");
-            else
-            if(6.25<=N && N<=7.00)
-                results.put("neuroticism "," - High");
-
-
-        //update the DB
-         TelephonyManager tm = (TelephonyManager)getSystemService(Context.TELEPHONY_SERVICE); // todo:put this in a helper class
-
-        FirebaseDB db = new FirebaseDB();
-        db.setSimSerialNumber(tm.getSimSerialNumber().toString());
-         db.updateResponsesToDB(results);
     }
 
 }

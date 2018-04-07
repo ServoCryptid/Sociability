@@ -1,4 +1,4 @@
-package Databases;
+package Databases.Firebase;
 
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
@@ -14,10 +14,16 @@ public class FirebaseDB  {
 
     private String simSerialNumber ;
 
-    public void updateResponsesToDB(HashMap <String,String> quizAnswers){
+    public void updateResponsesToDB_shortQuiz(HashMap <String,String> quizAnswers){
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         databaseReference = database.getReference();
-        databaseReference.child("Users").child(simSerialNumber).child("quiz_results").setValue(quizAnswers);
+        databaseReference.child("Users").child(simSerialNumber).child("quiz_results").child("short_quiz").setValue(quizAnswers);
+    }
+
+    public void updateResponsesToDB_longQuiz(HashMap <String,String> quizAnswers){
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        databaseReference = database.getReference();
+        databaseReference.child("Users").child(simSerialNumber).child("quiz_results").child("long_quiz").setValue(quizAnswers);
     }
 
     public void updateStatsToDB(HashMap<String,Double> list){
@@ -32,6 +38,7 @@ public class FirebaseDB  {
     }
 
     public void setSimSerialNumber(String simSerialNumber) {
+
         this.simSerialNumber = simSerialNumber;
     }
 

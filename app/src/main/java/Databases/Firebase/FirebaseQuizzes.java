@@ -1,4 +1,4 @@
-package Databases;
+package Databases.Firebase;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -10,6 +10,7 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 
 import sociability.com.QuizActivity;
+import sociability.com.ResultsActivity;
 
 /**
  * Created by Larisa on 28.03.2018.
@@ -17,10 +18,10 @@ import sociability.com.QuizActivity;
 
 public class FirebaseQuizzes {
     private DatabaseReference databaseReference;
+    private FirebaseDatabase database = FirebaseDatabase.getInstance();
 
-    public void getSmallQuizQuestions(){ // get the quiz questions from the database //trebuie sa returneze array-ul cu intrebarile
+    public void getSmallQuizQuestions(){ // get the quiz questions from the database
 
-        FirebaseDatabase database = FirebaseDatabase.getInstance();
         databaseReference = database.getReference("Quizzes/short_quiz");
         databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
 
@@ -37,9 +38,8 @@ public class FirebaseQuizzes {
         }); // it does only one read
     }
 
-    public void getLargeQuizQuestions(){ // get the quiz questions from the database //trebuie sa returneze array-ul cu intrebarile
+    public void getLargeQuizQuestions(){ // get the quiz questions from the database
 
-        FirebaseDatabase database = FirebaseDatabase.getInstance();
         databaseReference = database.getReference("Quizzes/long_quiz");
         databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
 
@@ -54,6 +54,24 @@ public class FirebaseQuizzes {
             public void onCancelled(DatabaseError databaseError) {}
 
 
-        }); // it does only one read
+        });
+    }
+
+    public void getLargeQuizScore(){
+        databaseReference = database.getReference("Scores/long_quiz");
+        databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
+
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                GenericTypeIndicator <ArrayList<String>> myGenericType = new GenericTypeIndicator<ArrayList<String>>(){};
+                ResultsActivity.long_quiz_scores = dataSnapshot.getValue(myGenericType);
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {}
+
+
+        });
     }
 }

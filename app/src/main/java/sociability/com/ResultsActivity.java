@@ -11,11 +11,14 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import Databases.ROOM.AppDatabase;
 import Databases.ROOM.CALL;
 import Databases.ROOM.SMS;
+
+import static sociability.com.FirstScreenActivity.fDB;
 
 public class ResultsActivity extends AppCompatActivity implements View.OnClickListener {
     private RecyclerView mRecyclerView;
@@ -23,6 +26,7 @@ public class ResultsActivity extends AppCompatActivity implements View.OnClickLi
     private RecyclerView.LayoutManager mLayoutManager;
     private ArrayList<String> myData = new ArrayList<String>();
     private AppDatabase db;
+    public static ArrayList<String> long_quiz_scores;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -84,9 +88,148 @@ public class ResultsActivity extends AppCompatActivity implements View.OnClickLi
         mRecyclerView.setAdapter(mAdapter);
 
     }
+
+    public static void getShortQuizResults(List<Integer> quiz_answers){
+        int reversed [] = {7,6,5,4,3,2,1};
+        HashMap <String,String> results = new HashMap<String,String>();
+
+        double O=0;
+        double C=0;
+        double E=0;
+        double A=0;
+        double N=0;
+
+        O = (quiz_answers.get(4) + reversed[quiz_answers.get(9)-1])/2;
+        if(0 <= O && O<=4.30)
+            results.put("openness"," - Low");
+        else
+        if(4.31<=O && O <=6.44)
+            results.put("openness","- Medium");
+        else
+        if(6.45<=O && O<=7.00)
+            results.put("openness"," - High");
+
+        C = (quiz_answers.get(2) + reversed[quiz_answers.get(7)-1])/2;
+        if(0 <= C && C<=4.07)
+            results.put("conscientiousness "," - Low");
+        else
+        if(4.08<=C && C <=6.71)
+            results.put("conscientiousness"," -  Medium");
+        else
+        if(6.72<=C && C<=7.00)
+            results.put("conscientiousness"," - High");
+
+        E = (double)(quiz_answers.get(0) + reversed[quiz_answers.get(5)-1])/2;
+        if(0 <= E && E<=2.98)
+            results.put("extraversion "," - Low");
+        else
+        if(2.99<=E && E <=5.88)
+            results.put("extraversion"," -  Medium");
+        else
+        if(5.89<=E && E<=7.00)
+            results.put("extraversion"," - High");
+
+        A = (quiz_answers.get(6) + reversed[quiz_answers.get(1)-1])/2;
+        if(0 <= A && A<=4.11)
+            results.put("agreeableness "," - Low");
+        else
+        if(4.12<=A && A <=6.33)
+            results.put("agreeableness "," -  Medium");
+        else
+        if(6.34<=A && A<=7.00)
+            results.put("agreeableness "," - High");
+
+        N = (quiz_answers.get(3) + reversed[quiz_answers.get(8)-1])/2;
+        if(0 <= N && N<=3.40)
+            results.put("neuroticism "," - Low");
+        else
+        if(3.41<=N && N <=6.24)
+            results.put("neuroticism "," -  Medium");
+        else
+        if(6.25<=N && N<=7.00)
+            results.put("neuroticism "," - High");
+
+
+        //update the DB
+        fDB.updateResponsesToDB_shortQuiz(results);
+    }
+
+    public static String getLongQuizScore(List<Integer> quiz_answers){ //TODO: refactor this
+        String result = "";
+        HashMap<String,String> results = new HashMap<String,String>();
+        int O=0, O_max=0;
+        int C=0, C_max=0;
+        int E=0, E_max=0;
+        int A=0, A_max=0;
+        int N=0, N_max=0;
+
+        for(int i=1;i<=50;i++){
+            switch(i%5){
+                case 1:
+                    if(long_quiz_scores.get(i).charAt(1)=='+') // the model in score_points +/-
+                        O += quiz_answers.get(i-1);
+                    else
+                        O += 6 - quiz_answers.get(i-1); //it's inverted see: http://ipip.ori.org/newScoringInstructions.htm
+
+                    O_max+= quiz_answers.get(i-1);
+                    break;
+                case 2:
+                    if(long_quiz_scores.get(i).charAt(1)=='+') // the model in score_points +/-
+                        C += quiz_answers.get(i-1);
+                    else
+                        C += 6 - quiz_answers.get(i-1); //it's inverted see: http://ipip.ori.org/newScoringInstructions.htm
+
+                    C_max += quiz_answers.get(i-1);
+                    break;
+                case 3:
+                    if(long_quiz_scores.get(i).charAt(1)=='+') // the model in score_points +/-
+                        E += quiz_answers.get(i-1);
+                    else
+                        E += 6 - quiz_answers.get(i-1); //it's inverted see: http://ipip.ori.org/newScoringInstructions.htm
+
+                    E_max+= quiz_answers.get(i-1);
+                    break;
+                case 4:
+                    if(long_quiz_scores.get(i).charAt(1)=='+') // the model in score_points +/-
+                        A += quiz_answers.get(i-1);
+                    else
+                        A += 6 - quiz_answers.get(i-1); //it's inverted see: http://ipip.ori.org/newScoringInstructions.htm
+
+                    A_max+= quiz_answers.get(i-1);
+                    break;
+                case 0:
+                    if(long_quiz_scores.get(i).charAt(1)=='+') // the model in score_points +/-
+                        N += quiz_answers.get(i-1);
+                    else
+                        N += 6 - quiz_answers.get(i-1); //it's inverted see: http://ipip.ori.org/newScoringInstructions.htm
+
+                    N_max+= quiz_answers.get(i-1);
+                    break;
+            }
+        }
+        result += "Openness " + O + "/ " + O_max+"\n";//TODO: get rid of result , find another way to display the message from results
+        results.put("Openness ", O + "/ "+ O_max );
+
+        result +=  "Conscientiousness " + C +"/ "+ C_max+"\n";
+        results.put("Conscientiousness " , C +"/ "+ C_max );
+
+        result += "Extraversion " + E +"/ "+ E_max+"\n";
+        results.put("Extraversion " , E +"/ "+ E_max );
+
+        result += "Agreeableness " + A +"/ "+ A_max+"\n";
+        results.put("Agreeableness ", A +"/ "+ A_max);
+
+        result += "Neuroticism " + N +"/ "+ N_max+"\n";
+        results.put("Neuroticism ", N +"/ "+ N_max);
+
+        fDB.updateResponsesToDB_longQuiz(results);
+
+        return result;
+    }
+
 }
 
-class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
+class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> { //TODO : delete this. you don't need it
     private ArrayList<String> mDataset;
 
     // Provide a reference to the views for each data item
@@ -130,6 +273,7 @@ class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
     public int getItemCount() {
         return mDataset.size();
     }
+
 }
 
 

@@ -1,9 +1,11 @@
 package sociability.com;
 
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.telephony.TelephonyManager;
 import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.TextPaint;
@@ -15,11 +17,13 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.TextView;
 
-import Databases.FirebaseQuizzes;
+import Databases.Firebase.FirebaseDB;
+import Databases.Firebase.FirebaseQuizzes;
 
 public class FirstScreenActivity extends AppCompatActivity implements View.OnClickListener {
    // private TextView call;
     private StringBuffer notificationMsg;
+    public static FirebaseDB fDB;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,14 +37,22 @@ public class FirstScreenActivity extends AppCompatActivity implements View.OnCli
          b.setEnabled(false);
          b.setBackground(d);
 
-         //region Retrieving the Quiz question from Firebase
+         //region Set the SIM serial number as identifier for the user
+         TelephonyManager tm ;
+         tm = (TelephonyManager)getSystemService(Context.TELEPHONY_SERVICE);
+         fDB = new FirebaseDB();
+         fDB.setSimSerialNumber(tm.getSimSerialNumber().toString());
+         //endregion
+
+         //region Retrieving the Quiz questions from Firebase
         FirebaseQuizzes fq = new FirebaseQuizzes();
         fq.getSmallQuizQuestions(); //retrieve questions from Firebase short quiz
         fq.getLargeQuizQuestions();//retrieve questions from Firebase large quiz
+        fq.getLargeQuizScore(); //retrieve the scoring points from Firebase
 
         //endregion
 
-        //region  Setting the spannablestring
+         //region  Setting the spannablestring
 
         SpannableString myString = new SpannableString("I agree with Sociability's privacy policy.");
         ClickableSpan clickableSpan = new ClickableSpan() {
