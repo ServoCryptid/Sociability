@@ -23,18 +23,22 @@ import Entities.SMSSample;
 import Filters.StatisticalMeasuresCall;
 import Filters.StatisticalMeasuresSMS;
 
+import static Helper.Utils.checkForZeroCall;
+import static Helper.Utils.checkForZeroMessages;
+import static Helper.Utils.checkIfNumberExists;
+import static Helper.Utils.checkIfObjExists;
+import static sociability.com.FirstScreenActivity.fDB;
+
 /**
  * Created by Larisa on 03.01.2018.
  */
 
 public class FetchLogs extends AsyncTask<Void, Void, Void> {
-    //todo: create a structure for the helper methods + add them here
+
     private AppDatabase db;
     private ProgressDialog mProgressDialog;
     private Context mContext;
     TelephonyManager tm;
-
-    FirebaseDB fdb = new FirebaseDB();
 
     public FetchLogs(ProgressDialog pD, Context c){
         this.mProgressDialog = pD;
@@ -50,11 +54,13 @@ public class FetchLogs extends AsyncTask<Void, Void, Void> {
 
         db =  AppDatabase.getAppDatabase(mContext); //get my ROOM database instance //todo: see where you should close the db
 
-        if(db.smsDao().countPhoneNumbers()==0) // read the sms log once
-             getSMSDetails();
+        if(db.smsDao().countPhoneNumbers()== 0) { // read the sms log once
+            applySMSStatistics(getSMSDetails("content://sms/sent"),"sent");
 
+            getSMSDetails("content://sms/inbox");
+        }
 
-        if(db.callDao().countPhoneNumbers()==0)
+        if(db.callDao().countPhoneNumbers()== 0)
             getCallDetails();
         return null;
     }
@@ -78,7 +84,7 @@ public class FetchLogs extends AsyncTask<Void, Void, Void> {
         while ( cursor.moveToNext() ) {
             String phNumber = cursor.getString( number );
             String callType = cursor.getString( type );
-            String callDate = cursor.getString( date );
+            String callDate = cursor.getString( date ); // you have to apply millistoDate from Utils class
             Date callDayTime = new Date(Long.valueOf(callDate));
             String callDuration = cursor.getString( duration );
             String dir = null;
@@ -111,7 +117,6 @@ public class FetchLogs extends AsyncTask<Void, Void, Void> {
             else {
                 callList.add(call);
             }
-
         }
         cursor.close();
 
@@ -119,13 +124,13 @@ public class FetchLogs extends AsyncTask<Void, Void, Void> {
         applyCallStatistics(callList);
     }
 
-    private void getSMSDetails(){
+    private  List<SMSSample> getSMSDetails(String path){
        // final String[] projection = {"date_sent" ,"address", "body", "type"};
         final String[] projection = {"address", "body"};
 
         int index;
         List<SMSSample> smsSent = new ArrayList<SMSSample>();
-        Cursor cursor = mContext.getContentResolver().query(Uri.parse("content://sms/sent"),projection , null, null, null);
+        Cursor cursor = mContext.getContentResolver().query(Uri.parse(path),projection , null, null, null);
         String phoneNumber="";
         String smsBody="";
 
@@ -165,68 +170,17 @@ public class FetchLogs extends AsyncTask<Void, Void, Void> {
         cursor.close();
 
         smsSent = checkForZeroMessages(smsSent); //in order to delete the records with numbers and no messages
-        applySMSStatistics(smsSent);
 
-    }
-
-    public int checkIfObjExists(List<SMSSample> list, SMSSample sample){ // check if the number is already in the list //todo: change this (duplicate code)
-        int i;
-        SMSSample aux;
-
-        for(i=0;i<list.size();i++){
-            aux = list.get(i);
-            if(aux.equals(sample))
-                return i;
-        }
-        return -1;
+        return smsSent;
     }
 
 
-    public int checkIfNumberExists(List<CallSample> list, CallSample sample){ // check if the number is already in the list //todo: change this duplicate code
-        int i;
-        CallSample aux;
-
-        for(i=0;i<list.size();i++){
-            aux = list.get(i);
-            if(aux.equals(sample))
-                return i;
-        }
-        return -1;
-    }
-
-    public List<SMSSample> checkForZeroMessages(List<SMSSample> list){//todo: duplicate code. change it
-        List<SMSSample> newList ;
-        newList = list;
-        for(int i=0;i<list.size();i++){
-            SMSSample temp = list.get(i);
-            if(temp.smsBody.size()==0) {
-                newList.remove(i);
-                i--;
-            }
-        }
-
-        return newList;
-    }
-
-    public List<CallSample> checkForZeroCall(List<CallSample> list){ //todo: duplicate code. change it
-        List<CallSample> newList ;
-        newList = list;
-        for(int i=0;i<list.size();i++){
-            CallSample temp = list.get(i);
-            if(temp.callDurations.size()==0) {
-                newList.remove(i);
-                i--;
-            }
-        }
-
-        return newList;
-    }
-
-    public void applySMSStatistics(List<SMSSample> list){ // changed temporary to compute the overall sms statistics (for the contest)
+    public void applySMSStatistics(List<SMSSample> list, String type){
         SMSSample tempSMSSample;
         double overallAverageSMSLength = 0;
         double overallMedianWordLength = 0;
         double overallAverageWordLength = 0;
+        int noOfSMS = 0;
         HashMap<String,Double> sms_stats = new HashMap<String,Double>();
 
         for(int i=0 ; i<list.size();i++){
@@ -234,29 +188,52 @@ public class FetchLogs extends AsyncTask<Void, Void, Void> {
             tempSMSSample = list.get(i);
 
             sms.setPhoneNumber(tempSMSSample.phoneNumber);
-            sms.setAvgSMSLength(StatisticalMeasuresSMS.averageMessageLength(tempSMSSample.getSmsBody()));
-            sms.setAvgWordLength(StatisticalMeasuresSMS.averageWordLength(tempSMSSample.getSmsBody()));
-            sms.setMedianWordLength(StatisticalMeasuresSMS.medianWordLength(tempSMSSample.getSmsBody()));
 
-            overallAverageSMSLength += StatisticalMeasuresSMS.averageMessageLength(tempSMSSample.getSmsBody());
-            overallAverageWordLength += StatisticalMeasuresSMS.averageWordLength(tempSMSSample.getSmsBody());
-            overallMedianWordLength += StatisticalMeasuresSMS.medianWordLength(tempSMSSample.getSmsBody());
+            if(type.equals("sent")){
+                sms.setAvgWordLengthSent(StatisticalMeasuresSMS.averageWordLength(tempSMSSample.getSmsBody()));
+                overallAverageWordLength += StatisticalMeasuresSMS.averageWordLength(tempSMSSample.getSmsBody());
 
-            db.smsDao().insertAll(sms);
+                sms.setMedianWordLengthSent(StatisticalMeasuresSMS.medianWordLength(tempSMSSample.getSmsBody()));
+                overallMedianWordLength += StatisticalMeasuresSMS.medianWordLength(tempSMSSample.getSmsBody());
+
+                sms.setAvgLengthSMSSent(StatisticalMeasuresSMS.averageMessageLength(tempSMSSample.getSmsBody()));
+                overallAverageSMSLength += StatisticalMeasuresSMS.averageMessageLength(tempSMSSample.getSmsBody());
+
+
+                noOfSMS += tempSMSSample.smsBody.size();
+            }
+
+            if(type.equals("inbox")) { //for the inbox messages we need only the average SMS length
+                sms.setAvgLengthSMSInbox(StatisticalMeasuresSMS.averageMessageLength(tempSMSSample.getSmsBody()));
+                overallAverageSMSLength += StatisticalMeasuresSMS.averageMessageLength(tempSMSSample.getSmsBody());
+
+            }
+
+            db.smsDao().insertAll(sms); //TODO: what do we insert in ROOM DB ?
            //db.smsDao().delete(sms);
         }
 
-        overallAverageSMSLength = overallAverageSMSLength/ list.size();
-        sms_stats.put("Average SMS length",overallAverageSMSLength);
+        if(overallAverageSMSLength != 0) {
+            overallAverageSMSLength = overallAverageSMSLength / list.size();
+            sms_stats.put("Average SMS length " + type, overallAverageSMSLength);
+        }
 
-        overallAverageWordLength = overallAverageWordLength /list.size();
-        sms_stats.put("Average word length",overallAverageWordLength );
+        if(overallAverageWordLength != 0) {
+            overallAverageWordLength = overallAverageWordLength / list.size();
+            sms_stats.put("Average word length " + type, overallAverageWordLength);
+        }
 
-        overallMedianWordLength = overallMedianWordLength/ list.size();
-        sms_stats.put("Median word length",overallMedianWordLength);
+        if(overallMedianWordLength != 0 ) {
+            overallMedianWordLength = overallMedianWordLength / list.size();
+            sms_stats.put("Median word length " + type, overallMedianWordLength);
+        }
 
-        fdb.setSimSerialNumber(tm.getSimSerialNumber().toString());
-        fdb.updateStatsToDB(sms_stats);
+        sms_stats.put("Messages with unique ID " + type, (double)list.size()); //TODO: e okay asa?
+
+        if(type.equals("sent"))
+            sms_stats.put("Number of messages " + type, (double)noOfSMS);
+
+        fDB.updateStatsToDB(sms_stats);
     }
 
     public void applyCallStatistics (List<CallSample> list){// changed temporary to compute the overall sms statistics (for the contest)
@@ -285,17 +262,6 @@ public class FetchLogs extends AsyncTask<Void, Void, Void> {
         call_stats.put("Average call duration",overallAverageDuration);
         call_stats.put("Total call duration", oversallTotalDuration);
 
-        fdb.setSimSerialNumber(tm.getSimSerialNumber().toString());
-        fdb.updateStatsToDB(call_stats);
+        fDB.updateStatsToDB(call_stats);
     }
-
-    public static String millisToDate(long currentTime) { //todo: put this in a helper class
-        String finalDate;
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTimeInMillis(currentTime);
-        Date date = calendar.getTime();
-        finalDate = date.toString();
-        return finalDate;
-    }
-
 }
