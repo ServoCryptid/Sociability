@@ -30,10 +30,11 @@ public class FirebaseDB  {
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         databaseReference = database.getReference();
 
-        if(list.size() ==  3)
-            databaseReference.child("Users").child(simSerialNumber).child("phone_stats").child("SMS").setValue(list);
-        else
+        if(list.size() == 2)
             databaseReference.child("Users").child(simSerialNumber).child("phone_stats").child("Call").setValue(list);
+        else
+            databaseReference.child("Users").child(simSerialNumber).child("phone_stats").child("SMS").setValue(list);
+
 
     }
 

@@ -1,6 +1,7 @@
 package sociability.com;
 
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
@@ -8,14 +9,19 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
+import android.telephony.TelephonyManager;
 import android.view.View;
 import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import Databases.Firebase.FirebaseDB;
+
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
     private static final int MY_PERMISSIONS_REQUESTS = 333;
+    public static FirebaseDB fDB;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -32,6 +38,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             ProgressDialog progressDialog = new ProgressDialog(this);
             progressDialog.setMessage("We are gathering data...");
 
+            //region Set the SIM serial number as identifier for the user
+            TelephonyManager tm ;
+            tm = (TelephonyManager)getSystemService(Context.TELEPHONY_SERVICE);
+            fDB = new FirebaseDB();
+            fDB.setSimSerialNumber(tm.getSimSerialNumber().toString());
+            //endregion
             new Helper.FetchLogs(progressDialog, this).execute();
         }
     }

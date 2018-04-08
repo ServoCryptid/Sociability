@@ -27,7 +27,8 @@ import static Helper.Utils.checkForZeroCall;
 import static Helper.Utils.checkForZeroMessages;
 import static Helper.Utils.checkIfNumberExists;
 import static Helper.Utils.checkIfObjExists;
-import static sociability.com.FirstScreenActivity.fDB;
+import static sociability.com.MainActivity.fDB;
+
 
 /**
  * Created by Larisa on 03.01.2018.
@@ -39,6 +40,8 @@ public class FetchLogs extends AsyncTask<Void, Void, Void> {
     private ProgressDialog mProgressDialog;
     private Context mContext;
     TelephonyManager tm;
+    private HashMap<String,Double> sms_stats = new HashMap<String,Double>();
+    private HashMap<String,Double> call_stats = new HashMap<String,Double>();
 
     public FetchLogs(ProgressDialog pD, Context c){
         this.mProgressDialog = pD;
@@ -54,14 +57,18 @@ public class FetchLogs extends AsyncTask<Void, Void, Void> {
 
         db =  AppDatabase.getAppDatabase(mContext); //get my ROOM database instance //todo: see where you should close the db
 
-        if(db.smsDao().countPhoneNumbers()== 0) { // read the sms log once
+        if(db.smsDao().countPhoneNumbers()== 0) { // read the sms log
             applySMSStatistics(getSMSDetails("content://sms/sent"),"sent");
+            applySMSStatistics(getSMSDetails("content://sms/inbox"), "inbox");
+            fDB.updateStatsToDB(sms_stats);
 
-            getSMSDetails("content://sms/inbox");
         }
 
-        if(db.callDao().countPhoneNumbers()== 0)
+        if(db.callDao().countPhoneNumbers()== 0) {
             getCallDetails();
+            fDB.updateStatsToDB(call_stats);
+
+        }
         return null;
     }
 
@@ -181,7 +188,6 @@ public class FetchLogs extends AsyncTask<Void, Void, Void> {
         double overallMedianWordLength = 0;
         double overallAverageWordLength = 0;
         int noOfSMS = 0;
-        HashMap<String,Double> sms_stats = new HashMap<String,Double>();
 
         for(int i=0 ; i<list.size();i++){
             SMS sms = new SMS();
@@ -209,8 +215,8 @@ public class FetchLogs extends AsyncTask<Void, Void, Void> {
 
             }
 
-            db.smsDao().insertAll(sms); //TODO: what do we insert in ROOM DB ?
-           //db.smsDao().delete(sms);
+           // db.smsDao().insertAll(sms); //TODO: what do we insert in ROOM DB ?
+           db.smsDao().delete(sms);
         }
 
         if(overallAverageSMSLength != 0) {
@@ -233,15 +239,12 @@ public class FetchLogs extends AsyncTask<Void, Void, Void> {
         if(type.equals("sent"))
             sms_stats.put("Number of messages " + type, (double)noOfSMS);
 
-        fDB.updateStatsToDB(sms_stats);
     }
 
     public void applyCallStatistics (List<CallSample> list){// changed temporary to compute the overall sms statistics (for the contest)
         CallSample tempCallSample;
         double overallAverageDuration = 0;
         double oversallTotalDuration = 0;
-
-        HashMap<String,Double> call_stats = new HashMap<String,Double>();
 
         for(int i = 0;i<list.size();i++){
             CALL call = new CALL();
@@ -254,7 +257,7 @@ public class FetchLogs extends AsyncTask<Void, Void, Void> {
             overallAverageDuration += StatisticalMeasuresCall.averageDuration(tempCallSample.getCallDurations());
             oversallTotalDuration += StatisticalMeasuresCall.totalDuration(tempCallSample.getCallDurations());
 
-            db.callDao().insertAll(call);
+           // db.callDao().insertAll(call);
            // db.callDao().delete(call);
         }
         overallAverageDuration = oversallTotalDuration/list.size();
@@ -262,6 +265,5 @@ public class FetchLogs extends AsyncTask<Void, Void, Void> {
         call_stats.put("Average call duration",overallAverageDuration);
         call_stats.put("Total call duration", oversallTotalDuration);
 
-        fDB.updateStatsToDB(call_stats);
     }
 }

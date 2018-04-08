@@ -18,7 +18,7 @@ import Databases.ROOM.AppDatabase;
 import Databases.ROOM.CALL;
 import Databases.ROOM.SMS;
 
-import static sociability.com.FirstScreenActivity.fDB;
+import static sociability.com.MainActivity.fDB;
 
 public class ResultsActivity extends AppCompatActivity implements View.OnClickListener {
     private RecyclerView mRecyclerView;

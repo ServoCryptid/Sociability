@@ -9,7 +9,7 @@ import android.content.Context;
  * Created by Larisa on 09.01.2018.
  */
 
-@Database(entities = {SMS.class,CALL.class}, version = 1)
+@Database(entities = {SMS.class,CALL.class}, version = 2)
 public abstract class AppDatabase extends RoomDatabase {
     private static AppDatabase INSTANCE;
     public abstract SMSDao smsDao();
@@ -23,6 +23,7 @@ public abstract class AppDatabase extends RoomDatabase {
                             // Don't do this on a real app! See PersistenceBasicSample for an example.
                     //todo:change these settings
                             .allowMainThreadQueries()
+                            .fallbackToDestructiveMigration()
                             .build();
             }
             return INSTANCE;
