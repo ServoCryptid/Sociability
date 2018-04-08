@@ -62,7 +62,7 @@ public class Utils {
         newList = list;
         for(int i=0;i<list.size();i++){
             CallSample temp = list.get(i);
-            if(temp.callDurations.size()==0) {
+            if(temp.incomingCallDurations.size() == 0 && temp.outgoingCallDurations.size() == 0) {
                 newList.remove(i);
                 i--;
             }

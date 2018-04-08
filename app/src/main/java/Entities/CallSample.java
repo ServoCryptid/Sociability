@@ -1,6 +1,7 @@
 package Entities;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -10,9 +11,10 @@ import java.util.List;
 public class CallSample  {
 
     public String phoneNumber;
-   // public String type ; // OUTGOING INCOMING
    // public String date; // format : Thu Jan 05 16:52:46 GMT+02:00 2017
-    public List<String> callDurations = new ArrayList<String>(); //in seconds
+    public List<String> incomingCallDurations = new ArrayList<String>(); //in seconds
+    public List<String> outgoingCallDurations = new ArrayList<String>(); //in seconds
+    public int missedCalls = 0;
 
     public CallSample(){}
 
@@ -27,25 +29,29 @@ public class CallSample  {
         this.phoneNumber = phoneNumber;
     }
 
-    //public String getType() {return type;}
-
-  //  public void setType(String type) {this.type = type;}
-
   //  public String getDate() {return date;}
 
    // public void setDate(String date) {this.date = date;}
 
-    public List<String> getCallDurations() {
-        return callDurations;
+    public List<String> getCallDurations(String type) {
+        if(type.equals("incoming"))
+            return incomingCallDurations;
+
+        return outgoingCallDurations;
     }
 
-    public void setDuration(List<String> duration) {
-        this.callDurations = duration;
+    public void addCallDuration(String duration, String callType ){
+        if(callType.equals("incoming")) {
+            this.incomingCallDurations.add(duration);
+        }
+        else
+            if(callType.equals("outgoing")){
+                this.outgoingCallDurations.add(duration);
+            }
+        else
+            this.missedCalls ++;
     }
 
-    public void addCallDuration(String duration ){
-        this.callDurations.add(duration);
-    }
     @Override
     public boolean equals (Object object){
         if(object !=null && object instanceof CallSample){

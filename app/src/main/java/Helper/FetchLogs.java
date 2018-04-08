@@ -65,7 +65,7 @@ public class FetchLogs extends AsyncTask<Void, Void, Void> {
         }
 
         if(db.callDao().countPhoneNumbers()== 0) {
-            getCallDetails();
+            applyCallStatistics(getCallDetails());
             fDB.updateStatsToDB(call_stats);
 
         }
@@ -77,7 +77,7 @@ public class FetchLogs extends AsyncTask<Void, Void, Void> {
             mProgressDialog.dismiss();
     }
 
-    private void getCallDetails() {
+    private List<CallSample> getCallDetails() {
         List<CallSample> callList = new ArrayList<CallSample>();
         StringBuffer sb = new StringBuffer();
         Cursor cursor = mContext.getContentResolver().query( CallLog.Calls.CONTENT_URI,null, null,null, null);
@@ -101,15 +101,15 @@ public class FetchLogs extends AsyncTask<Void, Void, Void> {
 
             switch( dircode ) {
                 case CallLog.Calls.OUTGOING_TYPE:
-                    dir = "OUTGOING";
+                    dir = "outgoing";
                     break;
 
                 case CallLog.Calls.INCOMING_TYPE:
-                    dir = "INCOMING";
+                    dir = "incoming";
                     break;
 
                 case CallLog.Calls.MISSED_TYPE:
-                    dir = "MISSED";
+                    dir = "missed";
                     break;
             }
 
@@ -119,7 +119,7 @@ public class FetchLogs extends AsyncTask<Void, Void, Void> {
             index = checkIfNumberExists(callList,call);
 
             if(index > -1){
-                callList.get(index).addCallDuration(callDuration);
+                callList.get(index).addCallDuration(callDuration, dir);
             }
             else {
                 callList.add(call);
@@ -128,7 +128,8 @@ public class FetchLogs extends AsyncTask<Void, Void, Void> {
         cursor.close();
 
         callList = checkForZeroCall(callList);
-        applyCallStatistics(callList);
+
+        return callList;
     }
 
     private  List<SMSSample> getSMSDetails(String path){
@@ -241,29 +242,72 @@ public class FetchLogs extends AsyncTask<Void, Void, Void> {
 
     }
 
-    public void applyCallStatistics (List<CallSample> list){// changed temporary to compute the overall sms statistics (for the contest)
+    public void applyCallStatistics (List<CallSample> list){
         CallSample tempCallSample;
-        double overallAverageDuration = 0;
-        double oversallTotalDuration = 0;
+        double overallAverageDurationI = 0;
+        double overallAverageDurationO = 0;
+
+        double overallTotalDurationI = 0;
+        double overallTotalDurationO = 0;
+        int missedCalls = 0;
+        int uniqueContactsM = 0; //unique contacts for missed calls
+        int outgoingCalls = 0;
+        int uniqueContactsO = 0;
+        int incomingCalls = 0;
+        int uniqueContactsI = 0;
 
         for(int i = 0;i<list.size();i++){
             CALL call = new CALL();
             tempCallSample = list.get(i);
 
             call.setPhoneNumber(tempCallSample.phoneNumber);
-            call.setAvgDuration(StatisticalMeasuresCall.averageDuration(tempCallSample.getCallDurations()));
-            call.setTotalDuration(StatisticalMeasuresCall.totalDuration(tempCallSample.getCallDurations()));
 
-            overallAverageDuration += StatisticalMeasuresCall.averageDuration(tempCallSample.getCallDurations());
-            oversallTotalDuration += StatisticalMeasuresCall.totalDuration(tempCallSample.getCallDurations());
+            call.setAvgDurationI(StatisticalMeasuresCall.averageDuration(tempCallSample.getCallDurations("incoming")));
+            call.setAvgDurationO(StatisticalMeasuresCall.averageDuration(tempCallSample.getCallDurations("outgoing")));
 
+            call.setTotalDurationI(StatisticalMeasuresCall.totalDuration(tempCallSample.getCallDurations("incoming")));
+            call.setTotalDurationI(StatisticalMeasuresCall.totalDuration(tempCallSample.getCallDurations("outgoing")));
+
+            overallAverageDurationI += StatisticalMeasuresCall.averageDuration(tempCallSample.getCallDurations("incoming"));
+            overallAverageDurationO += StatisticalMeasuresCall.averageDuration(tempCallSample.getCallDurations("outgoing"));
+
+            overallTotalDurationI += StatisticalMeasuresCall.totalDuration(tempCallSample.getCallDurations("incoming"));
+            overallTotalDurationO += StatisticalMeasuresCall.totalDuration(tempCallSample.getCallDurations("outgoing"));
+
+            if(tempCallSample.outgoingCallDurations.size() > 0){
+                outgoingCalls += tempCallSample.outgoingCallDurations.size();
+                uniqueContactsO ++;
+            }
+            if(tempCallSample.incomingCallDurations.size() > 0){
+                incomingCalls += tempCallSample.incomingCallDurations.size();
+                uniqueContactsI ++;
+            }
+            if(tempCallSample.missedCalls !=0) {
+                missedCalls += tempCallSample.missedCalls;
+                uniqueContactsM ++;
+            }
            // db.callDao().insertAll(call);
            // db.callDao().delete(call);
         }
-        overallAverageDuration = oversallTotalDuration/list.size();
+        overallAverageDurationI = overallTotalDurationI/incomingCalls;
+        overallAverageDurationO = overallTotalDurationO/outgoingCalls;
 
-        call_stats.put("Average call duration",overallAverageDuration);
-        call_stats.put("Total call duration", oversallTotalDuration);
+
+        call_stats.put("Average INCOMING call duration",overallAverageDurationI);
+        call_stats.put("Total INCOMING call duration", overallTotalDurationI);
+        call_stats.put("INCOMING calls", (double)incomingCalls);
+        call_stats.put("unique contacts INCOMING calls", (double)uniqueContactsI);
+
+        call_stats.put("Average OUTGOING call duration",overallAverageDurationO);
+        call_stats.put("Total OUTGOING call duration", overallTotalDurationO);
+        call_stats.put("OUTGOING calls", (double)outgoingCalls);
+        call_stats.put("unique contacts OUTGOING calls", (double)uniqueContactsO);
+
+        call_stats.put("Average I + O call duration",(overallTotalDurationI + overallTotalDurationO)/(incomingCalls + outgoingCalls));
+        call_stats.put("Total I + O call duration", overallTotalDurationI + overallTotalDurationO);
+
+        call_stats.put("Missed calls", (double)missedCalls);
+        call_stats.put("unique contacts MISSED calls", (double)uniqueContactsM);
 
     }
 }

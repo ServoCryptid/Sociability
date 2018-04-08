@@ -16,11 +16,17 @@ public class CALL {
     @NonNull
     private String phoneNumber;
 
-    @ColumnInfo(name = "average_call_duration")
-    private double avgDuration;
+    @ColumnInfo(name = "average_call_duration_I")
+    private double avgDurationI;
 
-    @ColumnInfo(name = "total_call_duration")
-    private double totalDuration;
+    @ColumnInfo(name = "average_call_duration_O")
+    private double avgDurationO;
+
+    @ColumnInfo(name = "total_call_duration_I")
+    private double totalDurationI;
+
+    @ColumnInfo(name = "total_call_duration_O")
+    private double totalDurationO;
 
     public String getPhoneNumber() {
         return phoneNumber;
@@ -30,20 +36,36 @@ public class CALL {
         this.phoneNumber = phoneNumber;
     }
 
-    public double getAvgDuration() {
-        return avgDuration;
+    public double getAvgDurationI() {
+        return avgDurationI;
     }
 
-    public void setAvgDuration(double avgDuration) {
-        this.avgDuration = avgDuration;
+    public void setAvgDurationI(double avgDuration) {
+        this.avgDurationI = avgDuration;
     }
 
-    public double getTotalDuration() {
-        return totalDuration;
+    public double getAvgDurationO() {
+        return avgDurationO;
     }
 
-    public void setTotalDuration(double totalDuration) {
-        this.totalDuration = totalDuration;
+    public void setAvgDurationO(double avgDuration) {
+        this.avgDurationO = avgDuration;
+    }
+
+    public double getTotalDurationI() {
+        return totalDurationI;
+    }
+
+    public void setTotalDurationI(double totalDuration) {
+        this.totalDurationI = totalDuration;
+    }
+
+    public double getTotalDurationO() {
+        return totalDurationO;
+    }
+
+    public void setTotalDurationO(double totalDuration) {
+        this.totalDurationO = totalDuration;
     }
 
     @Override
@@ -52,8 +74,10 @@ public class CALL {
         DecimalFormat formatter = new DecimalFormat("#0.00");
 
         result +="Phone number: " + phoneNumber + "\n";
-        result +="Average call duration: " + formatter.format(avgDuration) +" mins\n";
-        result +="Total call duration: " + formatter.format(totalDuration) +" mins\n";
+        result +="Average INCOMING call duration: " + formatter.format(avgDurationI) +" mins\n";
+        result +="Average OUTGOING call duration: " + formatter.format(avgDurationO) +" mins\n";
+        result +="Total INCOMING call duration: " + formatter.format(totalDurationI) +" mins\n";
+        result +="Total OUTGOING call duration: " + formatter.format(totalDurationO) +" mins\n";
 
         return result;
     }
