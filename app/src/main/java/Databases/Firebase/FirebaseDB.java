@@ -5,6 +5,8 @@ import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.HashMap;
 
+import static Helper.Utils.getTimestamp;
+
 /**
  * Created by Larisa on 02.01.2018.
  */
@@ -16,21 +18,21 @@ public class FirebaseDB  {
 
     public void updateResponsesToDB_shortQuiz(HashMap <String,String> quizAnswers){
         FirebaseDatabase database = FirebaseDatabase.getInstance();
-        databaseReference = database.getReference();
-        databaseReference.child("Users").child(simSerialNumber).child("quiz_results").child("short_quiz").setValue(quizAnswers);
+        databaseReference = database.getReference("Users/" + simSerialNumber+"/quiz_results/short_quiz/" + getTimestamp());
+        databaseReference.setValue(quizAnswers);
     }
 
     public void updateResponsesToDB_longQuiz(HashMap <String,String> quizAnswers){
         FirebaseDatabase database = FirebaseDatabase.getInstance();
-        databaseReference = database.getReference();
-        databaseReference.child("Users").child(simSerialNumber).child("quiz_results").child("long_quiz").setValue(quizAnswers);
+        databaseReference = database.getReference("Users/" + simSerialNumber+"/quiz_results/long_quiz/" + getTimestamp());
+        databaseReference.setValue(quizAnswers);
     }
 
     public void updateStatsToDB(HashMap<String,Double> list){
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         databaseReference = database.getReference();
 
-        if(list.size() == 2)
+        if(list.size() == 12)
             databaseReference.child("Users").child(simSerialNumber).child("phone_stats").child("Call").setValue(list);
         else
             databaseReference.child("Users").child(simSerialNumber).child("phone_stats").child("SMS").setValue(list);

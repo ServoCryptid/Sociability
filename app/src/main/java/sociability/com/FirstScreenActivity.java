@@ -1,5 +1,7 @@
 package sociability.com;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -57,8 +59,23 @@ public class FirstScreenActivity extends AppCompatActivity implements View.OnCli
         };
 
         myString.setSpan(clickableSpan, 27, 42, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        final AlertDialog.Builder dialog = new AlertDialog.Builder(this);
+
+        dialog.setTitle("Privacy text");// todo: text stored in string resource
+        dialog.setMessage("gvs"); //todo: text stored in string resource
+        dialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+
+            } });
+
         TextView mTextView = findViewById(R.id.textView);
         mTextView.setText(myString);
+        mTextView.setOnClickListener(new View.OnClickListener() {
+
+            public void onClick(View v) {
+                dialog.show();
+            }
+        });
         mTextView.setMovementMethod(LinkMovementMethod.getInstance());
         mTextView.setHighlightColor(getResources().getColor(R.color.colorAccent));
 

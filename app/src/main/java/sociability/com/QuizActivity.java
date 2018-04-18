@@ -11,8 +11,6 @@ import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.List;
 
-import static sociability.com.ResultsActivity.getShortQuizResults;
-
 public class QuizActivity extends AppCompatActivity {
     public static ArrayList<String> quiz_questions_short;
     public static ArrayList<String> quiz_questions_long;
@@ -71,7 +69,6 @@ public class QuizActivity extends AppCompatActivity {
 
                     if (question_number ==  MAX_NO_OF_QUESTIONS) { //we reached the last question
                         showEndingMessage();
-                        getShortQuizResults(quiz_answers);
 
                     } else {
                         current_question.setText(quiz_questions.get(question_number));
@@ -125,7 +122,9 @@ public class QuizActivity extends AppCompatActivity {
         remaining_questions_textView.setVisibility(View.INVISIBLE);
 
         if(quizType.equals("long quiz"))
-            endingMessage.setText(ResultsActivity.getLongQuizScore(quiz_answers));
+            endingMessage.setText(ResultsActivity.getLongQuizResult(quiz_answers));
+        else if(quizType.equals("short quiz"))
+            endingMessage.setText(ResultsActivity.getShortQuizResult(quiz_answers));
 
         endingMessage.setVisibility(View.VISIBLE);
 

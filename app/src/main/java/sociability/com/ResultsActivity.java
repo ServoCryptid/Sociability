@@ -89,7 +89,7 @@ public class ResultsActivity extends AppCompatActivity implements View.OnClickLi
 
     }
 
-    public static void getShortQuizResults(List<Integer> quiz_answers){
+    public static String getShortQuizResult(List<Integer> quiz_answers){
         int reversed [] = {7,6,5,4,3,2,1};
         HashMap <String,String> results = new HashMap<String,String>();
 
@@ -101,61 +101,62 @@ public class ResultsActivity extends AppCompatActivity implements View.OnClickLi
 
         O = (quiz_answers.get(4) + reversed[quiz_answers.get(9)-1])/2;
         if(0 <= O && O<=4.30)
-            results.put("openness"," - Low");
+            results.put("openness"," Low");
         else
         if(4.31<=O && O <=6.44)
-            results.put("openness","- Medium");
+            results.put("openness"," Medium");
         else
         if(6.45<=O && O<=7.00)
-            results.put("openness"," - High");
+            results.put("openness"," High");
 
         C = (quiz_answers.get(2) + reversed[quiz_answers.get(7)-1])/2;
         if(0 <= C && C<=4.07)
-            results.put("conscientiousness "," - Low");
+            results.put("conscientiousness "," Low");
         else
         if(4.08<=C && C <=6.71)
-            results.put("conscientiousness"," -  Medium");
+            results.put("conscientiousness"," Medium");
         else
         if(6.72<=C && C<=7.00)
-            results.put("conscientiousness"," - High");
+            results.put("conscientiousness"," High");
 
         E = (double)(quiz_answers.get(0) + reversed[quiz_answers.get(5)-1])/2;
         if(0 <= E && E<=2.98)
-            results.put("extraversion "," - Low");
+            results.put("extraversion "," Low");
         else
         if(2.99<=E && E <=5.88)
-            results.put("extraversion"," -  Medium");
+            results.put("extraversion"," Medium");
         else
         if(5.89<=E && E<=7.00)
-            results.put("extraversion"," - High");
+            results.put("extraversion"," High");
 
         A = (quiz_answers.get(6) + reversed[quiz_answers.get(1)-1])/2;
         if(0 <= A && A<=4.11)
-            results.put("agreeableness "," - Low");
+            results.put("agreeableness "," Low");
         else
         if(4.12<=A && A <=6.33)
-            results.put("agreeableness "," -  Medium");
+            results.put("agreeableness "," Medium");
         else
         if(6.34<=A && A<=7.00)
-            results.put("agreeableness "," - High");
+            results.put("agreeableness "," High");
 
         N = (quiz_answers.get(3) + reversed[quiz_answers.get(8)-1])/2;
         if(0 <= N && N<=3.40)
-            results.put("neuroticism "," - Low");
+            results.put("neuroticism "," Low");
         else
         if(3.41<=N && N <=6.24)
-            results.put("neuroticism "," -  Medium");
+            results.put("neuroticism "," Medium");
         else
         if(6.25<=N && N<=7.00)
-            results.put("neuroticism "," - High");
+            results.put("neuroticism "," High");
 
 
         //update the DB
         fDB.updateResponsesToDB_shortQuiz(results);
+
+        return results.toString();
     }
 
-    public static String getLongQuizScore(List<Integer> quiz_answers){ //TODO: refactor this
-        String result = "";
+    public static String getLongQuizResult(List<Integer> quiz_answers){ //TODO: refactor this
         HashMap<String,String> results = new HashMap<String,String>();
         int O=0, O_max=0;
         int C=0, C_max=0;
@@ -207,26 +208,20 @@ public class ResultsActivity extends AppCompatActivity implements View.OnClickLi
                     break;
             }
         }
-        result += "Openness " + O + "/ " + O_max+"\n";//TODO: get rid of result , find another way to display the message from results
         results.put("Openness ", O + "/ "+ O_max );
 
-        result +=  "Conscientiousness " + C +"/ "+ C_max+"\n";
         results.put("Conscientiousness " , C +"/ "+ C_max );
 
-        result += "Extraversion " + E +"/ "+ E_max+"\n";
         results.put("Extraversion " , E +"/ "+ E_max );
 
-        result += "Agreeableness " + A +"/ "+ A_max+"\n";
         results.put("Agreeableness ", A +"/ "+ A_max);
 
-        result += "Neuroticism " + N +"/ "+ N_max+"\n";
         results.put("Neuroticism ", N +"/ "+ N_max);
 
         fDB.updateResponsesToDB_longQuiz(results);
 
-        return result;
+        return results.toString();
     }
-
 }
 
 class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> { //TODO : delete this. you don't need it

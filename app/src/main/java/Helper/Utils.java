@@ -1,8 +1,10 @@
 package Helper;
 
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 import Entities.CallSample;
 import Entities.SMSSample;
@@ -70,4 +72,16 @@ public class Utils {
 
         return newList;
     }
+
+    public static String getTimestamp (){
+        try {
+            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
+            return dateFormat.format(new Date()); // Find todays date
+        } catch (Exception e) {
+            e.printStackTrace();
+
+            return null;
+        }
+    }
+
 }
