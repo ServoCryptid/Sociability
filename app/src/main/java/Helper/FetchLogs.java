@@ -2,6 +2,7 @@ package Helper;
 
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -22,11 +23,13 @@ import Entities.CallSample;
 import Entities.SMSSample;
 import Filters.StatisticalMeasuresCall;
 import Filters.StatisticalMeasuresSMS;
+import sociability.com.MainActivity;
 
 import static Helper.Utils.checkForZeroCall;
 import static Helper.Utils.checkForZeroMessages;
 import static Helper.Utils.checkIfNumberExists;
 import static Helper.Utils.checkIfObjExists;
+
 import static sociability.com.MainActivity.fDB;
 
 
@@ -75,6 +78,7 @@ public class FetchLogs extends AsyncTask<Void, Void, Void> {
     protected void onPostExecute(Void result) {
         if (mProgressDialog.isShowing())
             mProgressDialog.dismiss();
+
     }
 
     private List<CallSample> getCallDetails() {
@@ -99,6 +103,7 @@ public class FetchLogs extends AsyncTask<Void, Void, Void> {
 
             int dircode = Integer.parseInt( callType );
 
+
             switch( dircode ) {
                 case CallLog.Calls.OUTGOING_TYPE:
                     dir = "outgoing";
@@ -111,18 +116,22 @@ public class FetchLogs extends AsyncTask<Void, Void, Void> {
                 case CallLog.Calls.MISSED_TYPE:
                     dir = "missed";
                     break;
+                default:
+                    dir = "irrelevant"; // we are not interested in other types of calls
+                    break;
             }
 
-            if(phNumber.contains("+4"))
-                phNumber = phNumber.substring(2);
-            CallSample call = new CallSample(phNumber);
-            index = checkIfNumberExists(callList,call);
+            if(!dir.equals("irrelevant")) {
+                if (phNumber.contains("+4"))
+                    phNumber = phNumber.substring(2);
+                CallSample call = new CallSample(phNumber);
+                index = checkIfNumberExists(callList, call);
 
-            if(index > -1){
-                callList.get(index).addCallDuration(callDuration, dir);
-            }
-            else {
-                callList.add(call);
+                if (index > -1) {
+                    callList.get(index).addCallDuration(callDuration, dir);
+                } else {
+                    callList.add(call);
+                }
             }
         }
         cursor.close();

@@ -33,8 +33,8 @@
 
         <activity android:name=".QuizActivity" />
         <activity android:name=".AboutActivity" />
-        <activity android:name=".ResultsActivity" />
         <activity android:name=".MainActivity" />
+        <activity android:name=".RadarChartActivity"></activity>
     </application>
 
 </manifest>

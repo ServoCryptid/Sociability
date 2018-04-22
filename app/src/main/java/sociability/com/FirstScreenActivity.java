@@ -22,6 +22,7 @@ import Databases.Firebase.FirebaseQuizzes;
 public class FirstScreenActivity extends AppCompatActivity implements View.OnClickListener {
    // private TextView call;
     private StringBuffer notificationMsg;
+    private  FirebaseQuizzes fq;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,9 +37,11 @@ public class FirstScreenActivity extends AppCompatActivity implements View.OnCli
          b.setBackground(d);
 
          //region Retrieving the Quiz questions from Firebase
-        FirebaseQuizzes fq = new FirebaseQuizzes();
+
+        fq = new FirebaseQuizzes();
         fq.getSmallQuizQuestions(); //retrieve questions from Firebase short quiz
         fq.getLargeQuizQuestions();//retrieve questions from Firebase large quiz
+        fq.getPersonalQuizQuestions();//retrieve questions from Firebase for personal quiz
         fq.getLargeQuizScore(); //retrieve the scoring points from Firebase
 
         //endregion
@@ -107,8 +110,9 @@ public class FirstScreenActivity extends AppCompatActivity implements View.OnCli
         // Perform action on click
         switch(v.getId()) {
             case R.id.start_button:
-            //start the main activity
+            //start the RadarChart activity
                 Intent intent = new Intent(this, MainActivity.class);
+               // Intent intent = new Intent(this, RadarChartActivity.class);
                 startActivity(intent);
                 break;
         }
@@ -135,6 +139,8 @@ public class FirstScreenActivity extends AppCompatActivity implements View.OnCli
     protected void onDestroy(){
         // call the superclass method first
         super.onDestroy();
-
+        fq.databaseReference.removeEventListener(fq.myListenerShort);
+        fq.databaseReference.removeEventListener(fq.myListenerLong);
+        fq.databaseReference.removeEventListener(fq.myListenerPersonal);
     }
 }

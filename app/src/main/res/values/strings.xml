@@ -21,8 +21,53 @@
     <string name="option4_text_quiz2"> Moderately Accurate </string>
     <string name="option5_text_quiz2"> Very Accurate </string>
 
+    <!-- Strings for long quiz-->
+    <string name="Q10"> &lt; 100</string>
+    <string name="Q11"> &gt; 100</string>
+    <string name="Q12"> peste 1000</string>
+
+    <string name="Q20"> 3</string>
+    <string name="Q21"> 5</string>
+    <string name="Q22"> mai mult de 5</string>
+
+    <string name="Q30"> O sun.</string>
+    <string name="Q31"> Ii scriu.</string>
+    <string name="Q32"> Depinde de situatie.</string>
+
+    <string name="Q40"> Intre 2 si 4 persoane.</string>
+    <string name="Q41"> Intre 4 si 6 persoan.e</string>
+    <string name="Q42"> Peste 10 persoane.</string>
+
+    <string name="Q50"> Dimineata.</string>
+    <string name="Q51"> Dupa-amiaza.</string>
+    <string name="Q52"> Seara.</string>
+
+    <string name="Q60"> Da.</string>
+    <string name="Q61"> Nu.</string>
+    <string name="Q62"> dummy</string>
+
+    <string name="Q70"> Da.</string>
+    <string name="Q71"> Nu.</string>
+    <string name="Q72"> dummy</string>
+
+    <string name="Q80"> Sugestii de imbunatatire a unor trasaturi.</string>
+    <string name="Q81"> Sugestii de cariera bazate pe rezultate.</string>
+    <string name="Q82"> dummy </string>
+
+    <string name="Q90"> Da, mi se pare utila.</string>
+    <string name="Q91"> Nu, nu ma intereseaza.</string>
+    <string name="Q92"> Poate  .</string>
+
 
     <string name="title_activity_about">AboutActivity</string>
     <string name="title_activity_dummy">Dummy</string>
     <string name="title_activity_main">MainActivity</string>
+
+    <!-- Strings for radar chart -->
+    <string name="extraversion"> Extrovert </string>
+    <string name="agreeableness"> Agreeable</string>
+    <string name="conscientiousness"> Conscientious</string>
+    <string name="openness"> Open </string>
+    <string name="neuroticism"> Neurotic </string>
+
 </resources>

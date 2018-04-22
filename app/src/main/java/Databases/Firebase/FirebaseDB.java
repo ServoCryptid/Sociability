@@ -16,15 +16,21 @@ public class FirebaseDB  {
 
     private String simSerialNumber ;
 
-    public void updateResponsesToDB_shortQuiz(HashMap <String,String> quizAnswers){
+    public void updateResponsesToDB_shortQuiz(HashMap <String,String> quizAnswers){//todo: and this
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         databaseReference = database.getReference("Users/" + simSerialNumber+"/quiz_results/short_quiz/" + getTimestamp());
         databaseReference.setValue(quizAnswers);
     }
 
-    public void updateResponsesToDB_longQuiz(HashMap <String,String> quizAnswers){
+    public void updateResponsesToDB_longQuiz(HashMap <String,String> quizAnswers){ //todo:refactor this
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         databaseReference = database.getReference("Users/" + simSerialNumber+"/quiz_results/long_quiz/" + getTimestamp());
+        databaseReference.setValue(quizAnswers);
+    }
+
+    public void updateResponsesToDB_personalQuiz(HashMap <String,String> quizAnswers){//todo: and this
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        databaseReference = database.getReference("Users/" + simSerialNumber+"/quiz_results/personal_quiz/" + getTimestamp());
         databaseReference.setValue(quizAnswers);
     }
 

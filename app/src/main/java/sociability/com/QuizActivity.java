@@ -1,9 +1,11 @@
 package sociability.com;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
+import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -11,12 +13,16 @@ import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.List;
 
+import Helper.ComputeResults;
+
 public class QuizActivity extends AppCompatActivity {
     public static ArrayList<String> quiz_questions_short;
     public static ArrayList<String> quiz_questions_long;
+    public static ArrayList<String> quiz_questions_personal;
     private static ArrayList<String> quiz_questions;
     private List<Integer> quiz_answers = new ArrayList<Integer>(10);
-    private int question_number;
+    private List<String> quiz_answers_personal = new ArrayList<String>(10);
+    private int question_number = 1;//the quiz starts with the first question
     private static int MAX_NO_OF_QUESTIONS ;
     private RadioGroup radioGroup;
     private TextView current_question;
@@ -24,6 +30,10 @@ public class QuizActivity extends AppCompatActivity {
     private Button button_next_question;
     private TextView endingMessage;
     private String quizType; //"short quiz" or "long quiz"
+    private String myString;
+    private int choice_number;// for the answer of the user at a certain question
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,22 +46,38 @@ public class QuizActivity extends AppCompatActivity {
         quizType = bundle.getString("message");
 
         if(quizType.equals("short quiz")) {
-            setContentView(R.layout.activity_quiz);
+            setContentView(R.layout.activity_short_quiz);
             quiz_questions = quiz_questions_short;
             MAX_NO_OF_QUESTIONS = quiz_questions.size();
 
         }
         else if(quizType.equals("long quiz")){
-            setContentView(R.layout.activity_quiz2);
+            setContentView(R.layout.activity_long_quiz);
             quiz_questions = quiz_questions_long;
+            MAX_NO_OF_QUESTIONS = quiz_questions.size();
+
+        }
+        else if(quizType.equals("personal quiz")){
+            setContentView(R.layout.activity_personal_quiz);
+            quiz_questions = quiz_questions_personal;
             MAX_NO_OF_QUESTIONS = quiz_questions.size();
 
         }
         //endregion
 
-        question_number = 1 ; //the quiz starts with the first question
+
+       // prefsUser.edit().putInt("short", 0).apply();
+       // prefsUser.edit().putInt("long", 0).apply();
+       // prefsUser.edit().putInt("personal", 0).apply();
+
         current_question = findViewById(R.id.question_textView);
+        radioGroup = findViewById(R.id.radioGroup);
+
+        if(quizType.equals("personal quiz"))
+            setRadioGroupText();
+
         current_question.setText(quiz_questions.get(question_number));
+
 
         button_next_question = findViewById(R.id.button_next);
         button_next_question.setOnClickListener(new View.OnClickListener() {
@@ -63,7 +89,12 @@ public class QuizActivity extends AppCompatActivity {
                 }
                 else {
                     radioGroup.clearCheck();
-                    quiz_answers.remove(question_number);
+                    if(quizType.equals("personal quiz")) {
+                        //quiz_answers_personal.remove(getStringResourceByName(myString));
+                        quiz_answers_personal.add(getStringResourceByName(myString));
+                    }
+                    else
+                        quiz_answers.add(choice_number);
 
                     question_number++;
 
@@ -71,6 +102,9 @@ public class QuizActivity extends AppCompatActivity {
                         showEndingMessage();
 
                     } else {
+                        if(quizType.equals("personal quiz"))
+                            setRadioGroupText();
+
                         current_question.setText(quiz_questions.get(question_number));
                         updateRemainingQuestionsNumber();
                     }
@@ -84,35 +118,69 @@ public class QuizActivity extends AppCompatActivity {
         endingMessage = findViewById(R.id.endingMessage);
         endingMessage.setVisibility(View.INVISIBLE); //until the quiz is completed
 
-        radioGroup = findViewById(R.id.radioGroup);
         radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
 
             @Override
             public void onCheckedChanged(RadioGroup group, int checkedId) {
                 // find which radio button is selected
                 if(checkedId == R.id.radio_button_option1) {
-                    quiz_answers.add(1);
+                    myString = "Q" + question_number;
+                    if(quizType.equals("personal quiz")){
+                        myString += 0;
+                    }
+                    else
+                        choice_number = 1;
                 } else if(checkedId == R.id.radio_button_option2) {
-                    quiz_answers.add(2);
+                    myString = "Q" + question_number;
+                    if(quizType.equals("personal quiz")){
+                        myString += 1;
+                    }
+                    else
+                        choice_number = 2;
 
                 } else if(checkedId == R.id.radio_button_option3) {
-                    quiz_answers.add(3);
+                    myString = "Q" + question_number;
+                    if(quizType.equals("personal quiz")){
+                        myString += 2;
+                    }
+                    else
+                        choice_number = 3;
 
                 } else if(checkedId == R.id.radio_button_option4) {
-                    quiz_answers.add(4);
+                    choice_number = 4;
 
                 } else if(checkedId == R.id.radio_button_option5) {
-                    quiz_answers.add(5);
+                    choice_number = 5;
 
                 } else if(checkedId == R.id.radio_button_option6) {
-                    quiz_answers.add(6);
+                    choice_number = 6;
 
                 } else if(checkedId == R.id.radio_button_option7){
-                    quiz_answers.add(7);
-
+                    choice_number = 7;
                 }
             }
         });
+    }
+
+    private void setRadioGroupText(){
+        String myString;
+        for (int i =0 ; i < radioGroup.getChildCount(); i++){
+            myString = "Q" + question_number + i;
+            ((RadioButton) radioGroup.getChildAt(i)).setText(getStringResourceByName(myString));
+
+            if((question_number >= 6 && question_number <= 8) && i == 2) // these 2 questions have 2, not 3 answers
+                ((RadioButton) radioGroup.getChildAt(i)).setVisibility(View.GONE);
+            else if (question_number > 8){
+                ((RadioButton) radioGroup.getChildAt(i)).setVisibility(View.VISIBLE);
+            }
+       }
+    }
+
+
+    private String getStringResourceByName(String aString) {
+        String packageName = getPackageName();
+        int resId = getResources().getIdentifier(aString, "string", packageName);
+        return getString(resId);
     }
 
     private void showEndingMessage() {
@@ -121,10 +189,22 @@ public class QuizActivity extends AppCompatActivity {
         button_next_question.setVisibility(View.INVISIBLE);
         remaining_questions_textView.setVisibility(View.INVISIBLE);
 
-        if(quizType.equals("long quiz"))
-            endingMessage.setText(ResultsActivity.getLongQuizResult(quiz_answers));
-        else if(quizType.equals("short quiz"))
-            endingMessage.setText(ResultsActivity.getShortQuizResult(quiz_answers));
+        if(quizType.equals("short quiz")) {
+            endingMessage.setText(ComputeResults.getShortQuizResult(quiz_answers));
+            MainActivity.short_quiz_completed = 1;
+            MainActivity.prefsUser.edit().putInt("short", 1).apply();
+        }
+        else if(quizType.equals("long quiz")) {
+            endingMessage.setText(ComputeResults.getLongQuizResult(quiz_answers));
+            MainActivity.long_quiz_completed = 1;
+            MainActivity.prefsUser.edit().putInt("long", 1).apply();
+        }
+
+        else if(quizType.equals("personal quiz")) {
+            ComputeResults.getPersonalQuizResult(quiz_answers_personal);
+            MainActivity.personal_quiz_completed = 1;
+            MainActivity.prefsUser.edit().putInt("personal", 1).apply();
+        }
 
         endingMessage.setVisibility(View.VISIBLE);
 
@@ -137,4 +217,12 @@ public class QuizActivity extends AppCompatActivity {
         remaining_questions_textView.setText(textToDisplay);
     }
 
+
+    @Override
+    public void onBackPressed(){//restart the MainActivity in order to update the card icons
+        Intent i = new Intent(this, MainActivity.class);
+        finish();
+        startActivity(i);
+
+    }
 }
