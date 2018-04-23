@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import Helper.ComputeResults;
+import Helper.FetchLogs;
 
 public class QuizActivity extends AppCompatActivity {
     public static ArrayList<String> quiz_questions_short;
@@ -64,11 +65,6 @@ public class QuizActivity extends AppCompatActivity {
 
         }
         //endregion
-
-
-       // prefsUser.edit().putInt("short", 0).apply();
-       // prefsUser.edit().putInt("long", 0).apply();
-       // prefsUser.edit().putInt("personal", 0).apply();
 
         current_question = findViewById(R.id.question_textView);
         radioGroup = findViewById(R.id.radioGroup);
@@ -191,19 +187,19 @@ public class QuizActivity extends AppCompatActivity {
 
         if(quizType.equals("short quiz")) {
             endingMessage.setText(ComputeResults.getShortQuizResult(quiz_answers));
-            MainActivity.short_quiz_completed = 1;
-            MainActivity.prefsUser.edit().putInt("short", 1).apply();
+            FirstScreenActivity.short_quiz_completed = 1;
+            FirstScreenActivity.prefsUser.edit().putInt("short", 1).apply();
         }
         else if(quizType.equals("long quiz")) {
             endingMessage.setText(ComputeResults.getLongQuizResult(quiz_answers));
-            MainActivity.long_quiz_completed = 1;
-            MainActivity.prefsUser.edit().putInt("long", 1).apply();
+            FirstScreenActivity.long_quiz_completed = 1;
+            FirstScreenActivity.prefsUser.edit().putInt("long", 1).apply();
         }
 
         else if(quizType.equals("personal quiz")) {
             ComputeResults.getPersonalQuizResult(quiz_answers_personal);
-            MainActivity.personal_quiz_completed = 1;
-            MainActivity.prefsUser.edit().putInt("personal", 1).apply();
+            FirstScreenActivity.personal_quiz_completed = 1;
+            FirstScreenActivity.prefsUser.edit().putInt("personal", 1).apply();
         }
 
         endingMessage.setVisibility(View.VISIBLE);

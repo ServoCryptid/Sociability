@@ -1,8 +1,10 @@
 package sociability.com;
 
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -23,11 +25,27 @@ public class FirstScreenActivity extends AppCompatActivity implements View.OnCli
    // private TextView call;
     private StringBuffer notificationMsg;
     private  FirebaseQuizzes fq;
+    private final static String PREFS_SETTINGS = "prefs_settings";
+    public static SharedPreferences prefsUser, prefsApp;
+    public static int short_quiz_completed = 0 ;// - if not completed, 1 for completed
+    public static int long_quiz_completed = 0 ;// - if not completed, 1 for completed
+    public static int personal_quiz_completed = 0 ;// - if not completed, 1 for completed
+    public static int agree_terms = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_first_screen);
+
+        // named preference file
+        prefsUser = getSharedPreferences(PREFS_SETTINGS, Context.MODE_PRIVATE);
+        // default prefs file for this app
+        prefsApp = getPreferences(Context.MODE_PRIVATE);
+
+        short_quiz_completed  = prefsUser.getInt("short", 0);
+        long_quiz_completed  = prefsUser.getInt("long", 0);
+        personal_quiz_completed  = prefsUser.getInt("personal", 0);
+        agree_terms = prefsUser.getInt("agree_terms", 0);
 
          final Button b = (Button) findViewById(R.id.start_button);
          final Drawable d = b.getBackground();
@@ -85,19 +103,26 @@ public class FirstScreenActivity extends AppCompatActivity implements View.OnCli
         //endregion
 
         CheckBox mCheckBox= ( CheckBox ) findViewById( R.id.policy_agree_checkbox);
-        mCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked){
-                if ( isChecked ) {
-                    b.setEnabled(true);
-                    b.setBackgroundColor(getResources().getColor(R.color.colorAccent));
 
-                }else{
-                    b.setEnabled(false);
-                    b.setBackground(d);
+        if(FirstScreenActivity.agree_terms == 1){
+            mCheckBox.setChecked(true);
+            b.setEnabled(true);
+            b.setBackgroundColor(getResources().getColor(R.color.colorAccent));
+        }
+        else {
+            mCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                    if (isChecked) {
+                        b.setEnabled(true);
+                        b.setBackgroundColor(getResources().getColor(R.color.colorAccent));
+
+                    } else {
+                        b.setEnabled(false);
+                        b.setBackground(d);
+                    }
                 }
-
-            }
-        });
+            });
+        }
 
     //    notificationMsg = new StringBuffer();*/
      //   LocalBroadcastManager.getInstance(this).registerReceiver(onNotice, new IntentFilter("Msg"));

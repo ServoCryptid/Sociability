@@ -23,6 +23,7 @@ import Entities.CallSample;
 import Entities.SMSSample;
 import Filters.StatisticalMeasuresCall;
 import Filters.StatisticalMeasuresSMS;
+import sociability.com.FirstScreenActivity;
 import sociability.com.MainActivity;
 
 import static Helper.Utils.checkForZeroCall;
@@ -45,6 +46,7 @@ public class FetchLogs extends AsyncTask<Void, Void, Void> {
     TelephonyManager tm;
     private HashMap<String,Double> sms_stats = new HashMap<String,Double>();
     private HashMap<String,Double> call_stats = new HashMap<String,Double>();
+
 
     public FetchLogs(ProgressDialog pD, Context c){
         this.mProgressDialog = pD;
@@ -79,6 +81,8 @@ public class FetchLogs extends AsyncTask<Void, Void, Void> {
         if (mProgressDialog.isShowing())
             mProgressDialog.dismiss();
 
+        FirstScreenActivity.agree_terms = 1; // the user agreed to the terms and conditions
+        FirstScreenActivity.prefsUser.edit().putInt("agree_terms", 1).apply();
     }
 
     private List<CallSample> getCallDetails() {

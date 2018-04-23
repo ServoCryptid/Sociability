@@ -21,29 +21,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 import Databases.Firebase.FirebaseDB;
+import Helper.FetchLogs;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
     private static final int MY_PERMISSIONS_REQUESTS = 333;
     public static FirebaseDB fDB;
-    public static int short_quiz_completed = 0 ;// - if not completed, 1 for completed
-    public static int long_quiz_completed = 0 ;// - if not completed, 1 for completed
-    public static int personal_quiz_completed = 0 ;// - if not completed, 1 for completed
-    private final static String PREFS_SETTINGS = "prefs_settings";
-    public static SharedPreferences prefsUser, prefsApp;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-        // named preference file
-        prefsUser = getSharedPreferences(PREFS_SETTINGS, Context.MODE_PRIVATE);
-        // default prefs file for this app
-        prefsApp = getPreferences(Context.MODE_PRIVATE);
-
-        short_quiz_completed  = prefsUser.getInt("short", 0);
-        long_quiz_completed  = prefsUser.getInt("long", 0);
-        personal_quiz_completed  = prefsUser.getInt("personal", 0);
 
         CardView cv1 = findViewById(R.id.cv1);
         cv1.setOnClickListener(this);
@@ -57,34 +44,35 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         updateCardImages();
 
-        if( checkAndRequestPermissions()){
-            //If you have already permitted the permission
-            ProgressDialog progressDialog = new ProgressDialog(this);
-            progressDialog.setMessage("We are gathering data...");
+        if(FirstScreenActivity.agree_terms == 0) {
+            if (checkAndRequestPermissions()) {
+                ProgressDialog progressDialog = new ProgressDialog(this);
+                progressDialog.setMessage("We are gathering data...");
 
-            //region Set the SIM serial number as identifier for the user
-            TelephonyManager tm ;
-            tm = (TelephonyManager)getSystemService(Context.TELEPHONY_SERVICE);
-            fDB = new FirebaseDB();
-            fDB.setSimSerialNumber(tm.getSimSerialNumber().toString());
-            //endregion
-            new Helper.FetchLogs(progressDialog, this).execute();
+                //region Set the SIM serial number as identifier for the user
+                TelephonyManager tm;
+                tm = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
+                fDB = new FirebaseDB();
+                fDB.setSimSerialNumber(tm.getSimSerialNumber().toString());
+                //endregion
+                new Helper.FetchLogs(progressDialog, this).execute();
+            }
         }
     }
 
     private void updateCardImages(){
 
-        if(short_quiz_completed == 1) {
+        if(FirstScreenActivity.short_quiz_completed == 1) {
             ImageView img = findViewById(R.id.image1);
             img.setImageResource(R.drawable.quiz_finished_card_icon);
         }
 
-        if(long_quiz_completed == 1) {
+        if(FirstScreenActivity.long_quiz_completed == 1) {
             ImageView img2 = findViewById(R.id.image2);
             img2.setImageResource(R.drawable.quiz_finished_card_icon);
         }
 
-        if(personal_quiz_completed == 1) {
+        if(FirstScreenActivity.personal_quiz_completed == 1) {
             ImageView img3 = findViewById(R.id.image3);
             img3.setImageResource(R.drawable.quiz_finished_card_icon);
         }
@@ -113,9 +101,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private boolean checkAndRequestPermissions(){
-        boolean hasPermissionReadPhoneState = (ContextCompat.checkSelfPermission(getApplicationContext(),
-                Manifest.permission.READ_PHONE_STATE) == PackageManager.PERMISSION_GRANTED);
-
         boolean hasPermissionReadCallLog = (ContextCompat.checkSelfPermission(getApplicationContext(),
                 android.Manifest.permission.READ_CALL_LOG) == PackageManager.PERMISSION_GRANTED);
 
@@ -126,10 +111,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         if (!hasPermissionReadCallLog) {
             listPermissionsNeeded.add(android.Manifest.permission.READ_CALL_LOG);
-        }
-
-        if (!hasPermissionReadPhoneState) {
-            listPermissionsNeeded.add(Manifest.permission.READ_PHONE_STATE);
         }
 
         if (!hasPermissionReadSMSLog) {
