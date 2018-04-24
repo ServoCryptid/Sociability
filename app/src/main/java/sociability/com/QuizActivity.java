@@ -14,7 +14,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import Helper.ComputeResults;
-import Helper.FetchLogs;
 
 public class QuizActivity extends AppCompatActivity {
     public static ArrayList<String> quiz_questions_short;

@@ -1,11 +1,8 @@
 package sociability.com;
 
-import android.*;
-import android.Manifest;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
@@ -21,7 +18,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import Databases.Firebase.FirebaseDB;
-import Helper.FetchLogs;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
     private static final int MY_PERMISSIONS_REQUESTS = 333;
@@ -44,17 +40,21 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         updateCardImages();
 
-        if(FirstScreenActivity.agree_terms == 0) {
+        //region Set the SIM serial number as identifier for the user
+        TelephonyManager tm;
+        tm = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
+        fDB = new FirebaseDB();
+        fDB.setSimSerialNumber(tm.getSimSerialNumber().toString());
+        //endregion
+
+        if(FirstScreenActivity.agree_terms == 1){
+            FirstScreenActivity.prefsUser.edit().putInt("agree_terms", 1).apply();
+        }
+        else {
             if (checkAndRequestPermissions()) {
                 ProgressDialog progressDialog = new ProgressDialog(this);
                 progressDialog.setMessage("We are gathering data...");
 
-                //region Set the SIM serial number as identifier for the user
-                TelephonyManager tm;
-                tm = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
-                fDB = new FirebaseDB();
-                fDB.setSimSerialNumber(tm.getSimSerialNumber().toString());
-                //endregion
                 new Helper.FetchLogs(progressDialog, this).execute();
             }
         }

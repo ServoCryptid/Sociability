@@ -9,7 +9,6 @@ import Databases.ROOM.AppDatabase;
 import static sociability.com.MainActivity.fDB;
 
 public class ComputeResults {
-    private ArrayList<String> myData = new ArrayList<String>();
     private AppDatabase db;
     public static ArrayList<String> long_quiz_scores;
 

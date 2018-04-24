@@ -82,7 +82,6 @@ public class FetchLogs extends AsyncTask<Void, Void, Void> {
             mProgressDialog.dismiss();
 
         FirstScreenActivity.agree_terms = 1; // the user agreed to the terms and conditions
-        FirstScreenActivity.prefsUser.edit().putInt("agree_terms", 1).apply();
     }
 
     private List<CallSample> getCallDetails() {
