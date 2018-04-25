@@ -70,4 +70,8 @@
     <string name="openness"> Open </string>
     <string name="neuroticism"> Neurotic </string>
 
+    <!-- Strings for the menu -->
+    <string name="about"> About </string>
+    <string name="exit"> Exit </string>
+
 </resources>

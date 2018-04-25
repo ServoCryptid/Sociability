@@ -7,7 +7,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.TextPaint;
@@ -21,8 +20,7 @@ import android.widget.TextView;
 
 import Databases.Firebase.FirebaseQuizzes;
 
-public class FirstScreenActivity extends AppCompatActivity implements View.OnClickListener {
-   // private TextView call;
+public class FirstScreenActivity extends BaseActivity implements View.OnClickListener {
     private StringBuffer notificationMsg;
     private  FirebaseQuizzes fq;
     private final static String PREFS_SETTINGS = "prefs_settings";
@@ -168,4 +166,5 @@ public class FirstScreenActivity extends AppCompatActivity implements View.OnCli
         fq.databaseReference.removeEventListener(fq.myListenerLong);
         fq.databaseReference.removeEventListener(fq.myListenerPersonal);
     }
+
 }

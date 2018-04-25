@@ -1,7 +1,6 @@
 package sociability.com;
 
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.RadioButton;
@@ -14,7 +13,7 @@ import java.util.List;
 
 import Helper.ComputeResults;
 
-public class QuizActivity extends AppCompatActivity {
+public class QuizActivity extends BaseActivity {
     public static ArrayList<String> quiz_questions_short;
     public static ArrayList<String> quiz_questions_long;
     public static ArrayList<String> quiz_questions_personal;

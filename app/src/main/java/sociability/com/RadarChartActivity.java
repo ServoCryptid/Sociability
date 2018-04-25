@@ -23,7 +23,7 @@ import java.util.List;
 
 import Databases.Firebase.FirebaseDB;
 
-public class RadarChartActivity extends AppCompatActivity implements View.OnClickListener{
+public class RadarChartActivity extends BaseActivity implements View.OnClickListener{
     private RadarView mRadarView;
     private static final int MY_PERMISSIONS_REQUESTS = 333;
     public static FirebaseDB fDB;
