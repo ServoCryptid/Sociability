@@ -7,13 +7,40 @@
     tools:context="sociability.com.RadarChartActivity">
 
 
+    <com.ultramegasoft.radarchart.RadarView
+        android:id="@+id/radar"
+        android:layout_width="match_parent"
+        android:layout_height="342dp"
+        android:layout_centerHorizontal="true"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        app:gravity="center"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <Button
         android:id="@+id/goTo_quiz_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
         android:layout_marginEnd="8dp"
-        android:layout_marginTop="8dp"
+        android:layout_marginStart="8dp"
         android:text="Improve accuracy"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <TextView
+        android:id="@+id/legend"
+        android:layout_width="wrap_content"
+        android:layout_height="100dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:text="O = Openness \nC = Conscientiousness\nE = Extraversion \nA = Agreaableness \nN = Neuroticism"
+        app:layout_constraintBottom_toTopOf="@+id/goTo_quiz_button"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/radar"
+        app:layout_constraintVertical_bias="0.442" />
 </android.support.constraint.ConstraintLayout>

@@ -6,7 +6,8 @@ import java.util.List;
 
 import Databases.ROOM.AppDatabase;
 
-import static sociability.com.MainActivity.fDB;
+import static sociability.com.RadarChartActivity.fDB;
+
 
 public class ComputeResults {
     private AppDatabase db;

@@ -1,6 +1,5 @@
 package sociability.com;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
@@ -210,14 +209,5 @@ public class QuizActivity extends AppCompatActivity {
         String textToDisplay = number +"/"+ (MAX_NO_OF_QUESTIONS-1);
 
         remaining_questions_textView.setText(textToDisplay);
-    }
-
-
-    @Override
-    public void onBackPressed(){//restart the MainActivity in order to update the card icons
-        Intent i = new Intent(this, MainActivity.class);
-        finish();
-        startActivity(i);
-
     }
 }

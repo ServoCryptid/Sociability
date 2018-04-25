@@ -136,8 +136,8 @@ public class FirstScreenActivity extends AppCompatActivity implements View.OnCli
         switch(v.getId()) {
             case R.id.start_button:
             //start the RadarChart activity
-                Intent intent = new Intent(this, MainActivity.class);
-               // Intent intent = new Intent(this, RadarChartActivity.class);
+               // Intent intent = new Intent(this, MainActivity.class);
+                Intent intent = new Intent(this, RadarChartActivity.class);
                 startActivity(intent);
                 break;
         }

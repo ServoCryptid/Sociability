@@ -30,8 +30,7 @@ import static Helper.Utils.checkForZeroCall;
 import static Helper.Utils.checkForZeroMessages;
 import static Helper.Utils.checkIfNumberExists;
 import static Helper.Utils.checkIfObjExists;
-
-import static sociability.com.MainActivity.fDB;
+import static sociability.com.RadarChartActivity.fDB;
 
 
 /**
@@ -82,6 +81,7 @@ public class FetchLogs extends AsyncTask<Void, Void, Void> {
             mProgressDialog.dismiss();
 
         FirstScreenActivity.agree_terms = 1; // the user agreed to the terms and conditions
+        FirstScreenActivity.prefsUser.edit().putInt("agree_terms", 1).apply();
     }
 
     private List<CallSample> getCallDetails() {

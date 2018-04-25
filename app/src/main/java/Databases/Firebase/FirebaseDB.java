@@ -48,6 +48,8 @@ public class FirebaseDB  {
 
     public void setSimSerialNumber(String simSerialNumber) {
 
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        databaseReference = database.getReference();
         this.simSerialNumber = simSerialNumber;
     }
 
