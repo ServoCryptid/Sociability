@@ -50,16 +50,19 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 //open quiz1
                 intent.putExtra("message", "short quiz");
                 startActivity(intent);
+                finish();
                 break;
             case R.id.cv2:
                 //open quiz2
                 intent.putExtra("message", "long quiz");
                 startActivity(intent);
+                finish();
                 break;
             case R.id.cv3:
                 //open quiz2
                 intent.putExtra("message", "personal quiz");
                 startActivity(intent);
+                finish();
                 break;
         }
     }

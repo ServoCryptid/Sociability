@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.text.Html;
 import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.TextPaint;
@@ -80,8 +81,7 @@ public class FirstScreenActivity extends BaseActivity implements View.OnClickLis
         myString.setSpan(clickableSpan, 27, 42, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
         final AlertDialog.Builder dialog = new AlertDialog.Builder(this);
 
-        dialog.setTitle("Privacy text");// todo: text stored in string resource
-        dialog.setMessage("gvs"); //todo: text stored in string resource
+        dialog.setMessage(Html.fromHtml(getResources().getString(R.string.privacy_terms_body)));
         dialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {
 

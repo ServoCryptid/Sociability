@@ -26,12 +26,9 @@ public class QuizActivity extends BaseActivity {
     private TextView current_question;
     private TextView remaining_questions_textView;
     private Button button_next_question;
-    private TextView endingMessage;
     private String quizType; //"short quiz" or "long quiz"
     private String myString;
     private int choice_number;// for the answer of the user at a certain question
-
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -92,7 +89,7 @@ public class QuizActivity extends BaseActivity {
                     question_number++;
 
                     if (question_number ==  MAX_NO_OF_QUESTIONS) { //we reached the last question
-                        showEndingMessage();
+                        applyChanges();
 
                     } else {
                         if(quizType.equals("personal quiz"))
@@ -107,9 +104,6 @@ public class QuizActivity extends BaseActivity {
 
         remaining_questions_textView = findViewById(R.id.displaying_no_questions_textView);
         updateRemainingQuestionsNumber();
-
-        endingMessage = findViewById(R.id.endingMessage);
-        endingMessage.setVisibility(View.INVISIBLE); //until the quiz is completed
 
         radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
 
@@ -176,30 +170,27 @@ public class QuizActivity extends BaseActivity {
         return getString(resId);
     }
 
-    private void showEndingMessage() {
-        current_question.setVisibility(View.INVISIBLE);
-        radioGroup.setVisibility(View.INVISIBLE);
-        button_next_question.setVisibility(View.INVISIBLE);
-        remaining_questions_textView.setVisibility(View.INVISIBLE);
+    private void applyChanges() {
 
         if(quizType.equals("short quiz")) {
-            endingMessage.setText(ComputeResults.getShortQuizResult(quiz_answers));
+            ComputeResults.getShortQuizResult(quiz_answers);
             FirstScreenActivity.short_quiz_completed = 1;
             FirstScreenActivity.prefsUser.edit().putInt("short", 1).apply();
+            finish();
         }
         else if(quizType.equals("long quiz")) {
-            endingMessage.setText(ComputeResults.getLongQuizResult(quiz_answers));
+            ComputeResults.getLongQuizResult(quiz_answers);
             FirstScreenActivity.long_quiz_completed = 1;
             FirstScreenActivity.prefsUser.edit().putInt("long", 1).apply();
+            finish();
         }
 
         else if(quizType.equals("personal quiz")) {
             ComputeResults.getPersonalQuizResult(quiz_answers_personal);
             FirstScreenActivity.personal_quiz_completed = 1;
             FirstScreenActivity.prefsUser.edit().putInt("personal", 1).apply();
+            finish();
         }
-
-        endingMessage.setVisibility(View.VISIBLE);
 
     }
 

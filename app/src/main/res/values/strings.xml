@@ -2,8 +2,57 @@
     <string name="app_name">Sociability</string>
 
     <!-- Strings FirstScreenActivityvity-->
-    <string name="show_results_button_name"> Show statistics</string>
-    <string name="take_quiz_button_name"> Take quiz</string>
+    <string name="show_results_button_name"> Show statistics </string>
+    <string name="take_quiz_button_name"> Take quiz </string>
+    <string name="privacy_terms_body">
+      <![CDATA[
+         <html><body style="text-align:justify;">
+      <h5>I. General</h5>
+      <p>
+        1.	These terms and conditions apply to the application called SOCIABILITY.
+      </p>
+      <p>
+        2.	By using the Application, you, as the user, accept that your rights and obligations regarding the Application are governed by these Terms and agree to abide by them.
+      </p>
+      <p>
+        3.	By providing Politehnica University of Timisoara with any of the data specified in Section 3.1 while using the Application, the User consents to the collecting, processing and transfer of information as set out in these Terms.
+      </p>
+      <p>
+        4.	We are committed to ensuring that your privacy is protected. You can be assured that any information we ask you to provide and by which you can be identified, will only be used in accordance with these Terms.
+      </p>
+      <p>
+        5.	Please review these Terms carefully before registration, installation and/or acceptance.
+      </p>
+      <h5>II. Processing of Personal Data</h5>
+      <p>
+      1.	By accepting these Terms, the User gives his or hers explicit consent that Politehnica University of Timisoara (as a data controller) may collect and process the personal data that the User provides to Politehnica University of Timisoara, in the moment the User starts using the application: such as call log and SMS log.
+      </p>
+      <p>
+      2.	The User Data may be processed only for identification of and communication with the User, administration and enhancement of the Application statistical purposes, so only for Politehnica University of Timisoara internal purposes. Such processing may also comprise coordination with other information, both within and outside the EU/EEA.
+      </p>
+      <p>
+        3.	The data Politehnica University of Timisoara collects from the User are metrics based on the analysis of the call and SMS logs. Those metrics extracted are for SMS : average SMS length (inbox/sent), messages with uniwue ID (inbox/sent), average word length (sent), median word length (sent), number of messages (sent). From the call log, the metrics extracted are: unique calls (Outgoing/ Incoming), outgoing calls, incoming calls, average duration (Outgoing/ Incoming), total duration (Outgoing/ Incoming ), average duration (Incoming + Outgoing), total duration (Incoming +Outgoing), missed calls , unique contacts.      </p>
+      <p>
+        4.	Politehnica University of Timisoara does not publish or disclose the User&#39;s non-public contacts without authorization. Politehnica University of Timisoara does not pass on the User Data to any third party without the User&#39;s permission, except as set out in these Terms or in circumstances where governmental bodies that have jurisdiction (e.g. courts and law enforcement agencies) are entitled to access or requests access to the User Data.
+      </p>
+      <p>
+        5.	The right to collect, process and transfer the User Data is terminated when the User deletes the User Data or uninstall the application.
+      </p>
+      <p>
+        6.	Under art. 13 of Law no. 677/2001 concerning the persons&#39;protection regarding the processing of personal data, the User has the right, once per calendar year, to request information concerning the personal data processed regarding the User, by sending a signed written request to Politehnica University of Timisoara at the address given below. If the User&#39;s personal data is processed in breach of the Law no. 677/2001, the User may, according to art. 14 of Law no. 677/2001, request that the personal data is corrected, updated, blocked or deleted.
+      </p>
+      <p>
+        7.	The User has the right, for justified and legitimate reasons, to object to the processing of personal data, according to art. 15 of Law no. 677/2001. In this regard, the User shall send to Politehnica University of Timisoara a written request to the address mentioned bellow.
+      </p>
+      <p>
+        8.	The User&#39;s personal data will not be processed for purposes related to bachelor degree research if the User opposes such processing. The User is, at any time, entitled to withdraw any given consent for the processing of personal data. Such withdrawal may be limited to include only the part of the processing that is connected to direct marketing.
+      </p>
+      <p>
+        9.	By downloading and installing the Application an/or any updates of the Application, the User is aware of and explicitly agrees to User Data processing as provided by these Terms. If these Terms are not accepted, then the User may not install the Application.
+      </p>
+     </body></html>
+  ]]>
+  </string>
 
     <!-- Strings for short quiz-->
     <string name="option1_text_quiz1"> Disagree strongly </string>

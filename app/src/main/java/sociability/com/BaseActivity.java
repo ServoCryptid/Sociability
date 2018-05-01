@@ -36,6 +36,8 @@ public class BaseActivity extends AppCompatActivity {
         return true;
     }
     protected void showExit(){
-        System.exit(0);
+        moveTaskToBack(true);
+        android.os.Process.killProcess(android.os.Process.myPid());
+        System.exit(1);
     }
 }
