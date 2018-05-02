@@ -3,6 +3,7 @@ package sociability.com;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
@@ -25,6 +26,7 @@ public class QuizActivity extends BaseActivity {
     private RadioGroup radioGroup;
     private TextView current_question;
     private TextView remaining_questions_textView;
+    private EditText editText ;
     private Button button_next_question;
     private String quizType; //"short quiz" or "long quiz"
     private String myString;
@@ -54,6 +56,8 @@ public class QuizActivity extends BaseActivity {
         }
         else if(quizType.equals("personal quiz")){
             setContentView(R.layout.activity_personal_quiz);
+            editText = findViewById(R.id.text_input);
+            editText.setVisibility(View.GONE);
             quiz_questions = quiz_questions_personal;
             MAX_NO_OF_QUESTIONS = quiz_questions.size();
 
@@ -81,7 +85,10 @@ public class QuizActivity extends BaseActivity {
                     radioGroup.clearCheck();
                     if(quizType.equals("personal quiz")) {
                         //quiz_answers_personal.remove(getStringResourceByName(myString));
-                        quiz_answers_personal.add(getStringResourceByName(myString));
+                        if(question_number == 8)
+                            quiz_answers_personal.add(editText.getText().toString());
+                        else
+                            quiz_answers_personal.add(getStringResourceByName(myString));
                     }
                     else
                         quiz_answers.add(choice_number);
@@ -134,10 +141,20 @@ public class QuizActivity extends BaseActivity {
                         choice_number = 3;
 
                 } else if(checkedId == R.id.radio_button_option4) {
-                    choice_number = 4;
+                    myString = "Q" + question_number;
+                    if(quizType.equals("personal quiz")){
+                        myString += 3;
+                    }
+                    else
+                        choice_number = 4;
 
                 } else if(checkedId == R.id.radio_button_option5) {
-                    choice_number = 5;
+                    myString = "Q" + question_number;
+                    if(quizType.equals("personal quiz")){
+                        myString += 4;
+                    }
+                    else
+                        choice_number = 5;
 
                 } else if(checkedId == R.id.radio_button_option6) {
                     choice_number = 6;
@@ -151,14 +168,25 @@ public class QuizActivity extends BaseActivity {
 
     private void setRadioGroupText(){
         String myString;
+        String questionText;
         for (int i =0 ; i < radioGroup.getChildCount(); i++){
             myString = "Q" + question_number + i;
-            ((RadioButton) radioGroup.getChildAt(i)).setText(getStringResourceByName(myString));
+            questionText = getStringResourceByName(myString);
+            ((RadioButton) radioGroup.getChildAt(i)).setText(questionText);
 
-            if((question_number >= 6 && question_number <= 8) && i == 2) // these 2 questions have 2, not 3 answers
+            if(questionText.equals("dummy")){
                 ((RadioButton) radioGroup.getChildAt(i)).setVisibility(View.GONE);
-            else if (question_number > 8){
+            }
+            else{
                 ((RadioButton) radioGroup.getChildAt(i)).setVisibility(View.VISIBLE);
+            }
+
+            if(question_number == 8){
+                editText.setVisibility(View.VISIBLE);
+            }
+            else{
+                editText.setVisibility(View.GONE);
+
             }
        }
     }
