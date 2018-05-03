@@ -42,36 +42,31 @@ public class QuizActivity extends BaseActivity {
         Bundle bundle = getIntent().getExtras();
         quizType = bundle.getString("message");
 
-        if(quizType.equals("short quiz")) {
-            setContentView(R.layout.activity_short_quiz);
-            quiz_questions = quiz_questions_short;
-            MAX_NO_OF_QUESTIONS = quiz_questions.size();
-
-        }
-        else if(quizType.equals("long quiz")){
-            setContentView(R.layout.activity_long_quiz);
-            quiz_questions = quiz_questions_long;
-            MAX_NO_OF_QUESTIONS = quiz_questions.size();
-
-        }
-        else if(quizType.equals("personal quiz")){
-            setContentView(R.layout.activity_personal_quiz);
-            editText = findViewById(R.id.text_input);
-            editText.setVisibility(View.GONE);
-            quiz_questions = quiz_questions_personal;
-            MAX_NO_OF_QUESTIONS = quiz_questions.size();
-
-        }
-        //endregion
+        setContentView(R.layout.activity_quiz);
+        editText = findViewById(R.id.text_input);
+        editText.setVisibility(View.GONE);
 
         current_question = findViewById(R.id.question_textView);
         radioGroup = findViewById(R.id.radioGroup);
 
-        if(quizType.equals("personal quiz"))
+        if(quizType.equals("personal quiz")) {
+            quiz_questions = quiz_questions_personal;
+            MAX_NO_OF_QUESTIONS = quiz_questions.size();
             setRadioGroupText();
+        }
+        else if(quizType.equals("long quiz")){
+            quiz_questions = quiz_questions_long;
+            MAX_NO_OF_QUESTIONS = quiz_questions.size();
+            ((RadioButton) radioGroup.getChildAt(5)).setVisibility(View.GONE);
+            ((RadioButton) radioGroup.getChildAt(6)).setVisibility(View.GONE);
+
+        }
+        else {
+            quiz_questions = quiz_questions_short;
+            MAX_NO_OF_QUESTIONS = quiz_questions.size();
+        }
 
         current_question.setText(quiz_questions.get(question_number));
-
 
         button_next_question = findViewById(R.id.button_next);
         button_next_question.setOnClickListener(new View.OnClickListener() {

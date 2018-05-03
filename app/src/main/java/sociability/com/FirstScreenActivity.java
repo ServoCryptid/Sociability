@@ -20,16 +20,19 @@ import android.widget.CompoundButton;
 import android.widget.TextView;
 
 import Databases.Firebase.FirebaseQuizzes;
+import Databases.ROOM.AppDatabase;
 
 public class FirstScreenActivity extends BaseActivity implements View.OnClickListener {
     private StringBuffer notificationMsg;
     private  FirebaseQuizzes fq;
+    public static AppDatabase db;
     private final static String PREFS_SETTINGS = "prefs_settings";
     public static SharedPreferences prefsUser, prefsApp;
     public static int short_quiz_completed = 0 ;// - if not completed, 1 for completed
     public static int long_quiz_completed = 0 ;// - if not completed, 1 for completed
     public static int personal_quiz_completed = 0 ;// - if not completed, 1 for completed
     public static int agree_terms = 0;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,6 +55,10 @@ public class FirstScreenActivity extends BaseActivity implements View.OnClickLis
          b.setOnClickListener(this);
          b.setEnabled(false);
          b.setBackground(d);
+
+         //room db
+        db = AppDatabase.getAppDatabase(this); //get my ROOM database instance //todo: see where you should close the db
+
 
          //region Retrieving the Quiz questions from Firebase
 

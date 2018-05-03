@@ -9,6 +9,7 @@ import android.os.AsyncTask;
 import android.provider.CallLog;
 import android.telephony.TelephonyManager;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -30,6 +31,7 @@ import static Helper.Utils.checkForZeroCall;
 import static Helper.Utils.checkForZeroMessages;
 import static Helper.Utils.checkIfNumberExists;
 import static Helper.Utils.checkIfObjExists;
+import static sociability.com.FirstScreenActivity.db;
 import static sociability.com.RadarChartActivity.fDB;
 
 
@@ -38,16 +40,15 @@ import static sociability.com.RadarChartActivity.fDB;
  */
 
 public class FetchLogs extends AsyncTask<Void, Void, Void> {
-
-    private AppDatabase db;
     private ProgressDialog mProgressDialog;
     private Context mContext;
     TelephonyManager tm;
-    private HashMap<String,Double> sms_stats = new HashMap<String,Double>();
-    private HashMap<String,Double> call_stats = new HashMap<String,Double>();
+    private HashMap<String, Double> sms_stats = new HashMap<String, Double>();
+    private HashMap<String, Double> call_stats = new HashMap<String, Double>();
+    public static ArrayList<String> call_metrics = new ArrayList<String>();
 
 
-    public FetchLogs(ProgressDialog pD, Context c){
+    public FetchLogs(ProgressDialog pD, Context c) {
         this.mProgressDialog = pD;
         this.mContext = c;
     }
@@ -56,23 +57,21 @@ public class FetchLogs extends AsyncTask<Void, Void, Void> {
         mProgressDialog.show();
     }
 
-    public Void doInBackground(Void... args){
-        tm = (TelephonyManager)mContext.getSystemService(Context.TELEPHONY_SERVICE);
+    public Void doInBackground(Void... args) {
+        tm = (TelephonyManager) mContext.getSystemService(Context.TELEPHONY_SERVICE);
 
-        db =  AppDatabase.getAppDatabase(mContext); //get my ROOM database instance //todo: see where you should close the db
 
-        if(db.smsDao().countPhoneNumbers()== 0) { // read the sms log
-            applySMSStatistics(getSMSDetails("content://sms/sent"),"sent");
-            applySMSStatistics(getSMSDetails("content://sms/inbox"), "inbox");
-            fDB.updateStatsToDB(sms_stats);
+        // read the sms log
+        applySMSStatistics(getSMSDetails("content://sms/sent"), "sent");
+        applySMSStatistics(getSMSDetails("content://sms/inbox"), "inbox");
+        fDB.updateStatsToDB(sms_stats);
 
-        }
 
-        if(db.callDao().countPhoneNumbers()== 0) {
-            applyCallStatistics(getCallDetails());
-            fDB.updateStatsToDB(call_stats);
+        // read the call log
+        applyCallStatistics(getCallDetails());
+        fDB.updateStatsToDB(call_stats);
 
-        }
+
         return null;
     }
 
@@ -87,27 +86,27 @@ public class FetchLogs extends AsyncTask<Void, Void, Void> {
     private List<CallSample> getCallDetails() {
         List<CallSample> callList = new ArrayList<CallSample>();
         StringBuffer sb = new StringBuffer();
-        Cursor cursor = mContext.getContentResolver().query( CallLog.Calls.CONTENT_URI,null, null,null, null);
+        Cursor cursor = mContext.getContentResolver().query(CallLog.Calls.CONTENT_URI, null, null, null, null);
 
-        int number = cursor.getColumnIndex( CallLog.Calls.NUMBER );
-        int type = cursor.getColumnIndex( CallLog.Calls.TYPE );
-        int date = cursor.getColumnIndex( CallLog.Calls.DATE);
-        int duration = cursor.getColumnIndex( CallLog.Calls.DURATION);
+        int number = cursor.getColumnIndex(CallLog.Calls.NUMBER);
+        int type = cursor.getColumnIndex(CallLog.Calls.TYPE);
+        int date = cursor.getColumnIndex(CallLog.Calls.DATE);
+        int duration = cursor.getColumnIndex(CallLog.Calls.DURATION);
 
 
-        while ( cursor.moveToNext() ) {
-            String phNumber = cursor.getString( number );
-            String callType = cursor.getString( type );
-            String callDate = cursor.getString( date ); // you have to apply millistoDate from Utils class
+        while (cursor.moveToNext()) {
+            String phNumber = cursor.getString(number);
+            String callType = cursor.getString(type);
+            String callDate = cursor.getString(date); // you have to apply millistoDate from Utils class
             Date callDayTime = new Date(Long.valueOf(callDate));
-            String callDuration = cursor.getString( duration );
+            String callDuration = cursor.getString(duration);
             String dir = null;
             int index;
 
-            int dircode = Integer.parseInt( callType );
+            int dircode = Integer.parseInt(callType);
 
 
-            switch( dircode ) {
+            switch (dircode) {
                 case CallLog.Calls.OUTGOING_TYPE:
                     dir = "outgoing";
                     break;
@@ -124,7 +123,7 @@ public class FetchLogs extends AsyncTask<Void, Void, Void> {
                     break;
             }
 
-            if(!dir.equals("irrelevant")) {
+            if (!dir.equals("irrelevant")) {
                 if (phNumber.contains("+4"))
                     phNumber = phNumber.substring(2);
                 CallSample call = new CallSample(phNumber);
@@ -144,41 +143,37 @@ public class FetchLogs extends AsyncTask<Void, Void, Void> {
         return callList;
     }
 
-    private  List<SMSSample> getSMSDetails(String path){
-       // final String[] projection = {"date_sent" ,"address", "body", "type"};
+    private List<SMSSample> getSMSDetails(String path) {
+        // final String[] projection = {"date_sent" ,"address", "body", "type"};
         final String[] projection = {"address", "body"};
 
         int index;
         List<SMSSample> smsSent = new ArrayList<SMSSample>();
-        Cursor cursor = mContext.getContentResolver().query(Uri.parse(path),projection , null, null, null);
-        String phoneNumber="";
-        String smsBody="";
+        Cursor cursor = mContext.getContentResolver().query(Uri.parse(path), projection, null, null, null);
+        String phoneNumber = "";
+        String smsBody = "";
 
         if (cursor.moveToFirst()) { // must check the result to prevent exception
             do {
-                for(int idx=0;idx<cursor.getColumnCount();idx++)
-                {
-                    if(cursor.getColumnName(idx).equals("date_sent")){
+                for (int idx = 0; idx < cursor.getColumnCount(); idx++) {
+                    if (cursor.getColumnName(idx).equals("date_sent")) {
                         String dateInMills = cursor.getString(idx);
-                    }
-                    else {
-                        if(cursor.getColumnName(idx).equals("address")) {
+                    } else {
+                        if (cursor.getColumnName(idx).equals("address")) {
                             phoneNumber = cursor.getString(idx);
-                            if(phoneNumber.contains("+4"))// remove the country prefix
+                            if (phoneNumber.contains("+4"))// remove the country prefix
                                 phoneNumber = phoneNumber.substring(2);
-                        }
-                        else if(cursor.getColumnName(idx).equals("body"))
-                             smsBody = cursor.getString(idx);
+                        } else if (cursor.getColumnName(idx).equals("body"))
+                            smsBody = cursor.getString(idx);
                     }
-                 }
-
-                 SMSSample temp = new SMSSample(phoneNumber);
-                 index = checkIfObjExists(smsSent,temp);
-
-                if(index > -1){
-                    smsSent.get(index).addSMS(smsBody);
                 }
-                else {
+
+                SMSSample temp = new SMSSample(phoneNumber);
+                index = checkIfObjExists(smsSent, temp);
+
+                if (index > -1) {
+                    smsSent.get(index).addSMS(smsBody);
+                } else {
                     smsSent.add(temp);
                 }
 
@@ -195,66 +190,74 @@ public class FetchLogs extends AsyncTask<Void, Void, Void> {
     }
 
 
-    public void applySMSStatistics(List<SMSSample> list, String type){
+    public void applySMSStatistics(List<SMSSample> list, String type) {
         SMSSample tempSMSSample;
         double overallAverageSMSLength = 0;
         double overallMedianWordLength = 0;
         double overallAverageWordLength = 0;
         int noOfSMS = 0;
 
-        for(int i=0 ; i<list.size();i++){
-            SMS sms = new SMS();
+        SMS sms = new SMS();
+        for (int i = 0; i < list.size(); i++) {
+
             tempSMSSample = list.get(i);
 
             sms.setPhoneNumber(tempSMSSample.phoneNumber);
 
-            if(type.equals("sent")){
-                sms.setAvgWordLengthSent(StatisticalMeasuresSMS.averageWordLength(tempSMSSample.getSmsBody()));
+            if (type.equals("sent")) {
                 overallAverageWordLength += StatisticalMeasuresSMS.averageWordLength(tempSMSSample.getSmsBody());
-
-                sms.setMedianWordLengthSent(StatisticalMeasuresSMS.medianWordLength(tempSMSSample.getSmsBody()));
                 overallMedianWordLength += StatisticalMeasuresSMS.medianWordLength(tempSMSSample.getSmsBody());
-
-                sms.setAvgLengthSMSSent(StatisticalMeasuresSMS.averageMessageLength(tempSMSSample.getSmsBody()));
                 overallAverageSMSLength += StatisticalMeasuresSMS.averageMessageLength(tempSMSSample.getSmsBody());
-
-
                 noOfSMS += tempSMSSample.smsBody.size();
             }
 
-            if(type.equals("inbox")) { //for the inbox messages we need only the average SMS length
-                sms.setAvgLengthSMSInbox(StatisticalMeasuresSMS.averageMessageLength(tempSMSSample.getSmsBody()));
+            if (type.equals("inbox")) { //for the inbox messages we need only the average SMS length
                 overallAverageSMSLength += StatisticalMeasuresSMS.averageMessageLength(tempSMSSample.getSmsBody());
-
             }
-
-           // db.smsDao().insertAll(sms); //TODO: what do we insert in ROOM DB ?
-           db.smsDao().delete(sms);
         }
 
-        if(overallAverageSMSLength != 0) {
+        if (overallAverageSMSLength != 0) {
             overallAverageSMSLength = overallAverageSMSLength / list.size();
+
+            if(type.equals("sent")){
+                sms.setAvgLengthSMSSent(overallAverageSMSLength);
+            }
+            else
+                sms.setAvgLengthSMSInbox(overallAverageSMSLength);
+
             sms_stats.put("Average SMS length " + type, overallAverageSMSLength);
         }
 
-        if(overallAverageWordLength != 0) {
+        if (overallAverageWordLength != 0) {
             overallAverageWordLength = overallAverageWordLength / list.size();
+
+            sms.setAvgWordLengthSent(overallAverageWordLength);
             sms_stats.put("Average word length " + type, overallAverageWordLength);
         }
 
-        if(overallMedianWordLength != 0 ) {
+        if (overallMedianWordLength != 0) {
             overallMedianWordLength = overallMedianWordLength / list.size();
+            sms.setMedianWordLengthSent(overallMedianWordLength);
             sms_stats.put("Median word length " + type, overallMedianWordLength);
         }
 
-        sms_stats.put("Messages with unique ID " + type, (double)list.size()); //TODO: e okay asa?
+        if(type.equals("sent")){
+            sms.setUniqueIDsent(list.size());
+        }
+        else
+            sms.setUniqueIDinbox(list.size());
 
-        if(type.equals("sent"))
-            sms_stats.put("Number of messages " + type, (double)noOfSMS);
+        sms_stats.put("Messages with unique ID " + type, (double) list.size()); //TODO: e okay asa?
 
+        if (type.equals("sent")) {
+            sms.setSmsSent(noOfSMS);
+            sms_stats.put("Number of messages " + type, (double) noOfSMS);
+        }
+        db.smsDao().insertAll(sms);
+        //db.smsDao().delete(sms);
     }
 
-    public void applyCallStatistics (List<CallSample> list){
+    public void applyCallStatistics(List<CallSample> list) {
         CallSample tempCallSample;
         double overallAverageDurationI = 0;
         double overallAverageDurationO = 0;
@@ -268,14 +271,15 @@ public class FetchLogs extends AsyncTask<Void, Void, Void> {
         int incomingCalls = 0;
         int uniqueContactsI = 0;
 
-        for(int i = 0;i<list.size();i++){
-            CALL call = new CALL();
+        CALL call = new CALL();
+
+        for (int i = 0; i < list.size(); i++) {
             tempCallSample = list.get(i);
 
             call.setPhoneNumber(tempCallSample.phoneNumber);
 
-            call.setAvgDurationI(StatisticalMeasuresCall.averageDuration(tempCallSample.getCallDurations("incoming")));
-            call.setAvgDurationO(StatisticalMeasuresCall.averageDuration(tempCallSample.getCallDurations("outgoing")));
+            StatisticalMeasuresCall.averageDuration(tempCallSample.getCallDurations("incoming"));
+            StatisticalMeasuresCall.averageDuration(tempCallSample.getCallDurations("outgoing"));
 
             call.setTotalDurationI(StatisticalMeasuresCall.totalDuration(tempCallSample.getCallDurations("incoming")));
             call.setTotalDurationI(StatisticalMeasuresCall.totalDuration(tempCallSample.getCallDurations("outgoing")));
@@ -286,40 +290,60 @@ public class FetchLogs extends AsyncTask<Void, Void, Void> {
             overallTotalDurationI += StatisticalMeasuresCall.totalDuration(tempCallSample.getCallDurations("incoming"));
             overallTotalDurationO += StatisticalMeasuresCall.totalDuration(tempCallSample.getCallDurations("outgoing"));
 
-            if(tempCallSample.outgoingCallDurations.size() > 0){
+            if (tempCallSample.outgoingCallDurations.size() > 0) {
                 outgoingCalls += tempCallSample.outgoingCallDurations.size();
-                uniqueContactsO ++;
+                uniqueContactsO++;
             }
-            if(tempCallSample.incomingCallDurations.size() > 0){
+            if (tempCallSample.incomingCallDurations.size() > 0) {
                 incomingCalls += tempCallSample.incomingCallDurations.size();
-                uniqueContactsI ++;
+                uniqueContactsI++;
             }
-            if(tempCallSample.missedCalls !=0) {
+            if (tempCallSample.missedCalls != 0) {
                 missedCalls += tempCallSample.missedCalls;
-                uniqueContactsM ++;
+                uniqueContactsM++;
             }
-           // db.callDao().insertAll(call);
-           // db.callDao().delete(call);
+
         }
-        overallAverageDurationI = overallTotalDurationI/incomingCalls;
-        overallAverageDurationO = overallTotalDurationO/outgoingCalls;
+        overallAverageDurationI = overallTotalDurationI / incomingCalls;
+        overallAverageDurationO = overallTotalDurationO / outgoingCalls;
 
+        call.setAvgDurationI(overallAverageDurationI);
+        call_stats.put("Average INCOMING call duration", overallAverageDurationI);
 
-        call_stats.put("Average INCOMING call duration",overallAverageDurationI);
+        call.setTotalDurationI(overallTotalDurationI);
         call_stats.put("Total INCOMING call duration", overallTotalDurationI);
-        call_stats.put("INCOMING calls", (double)incomingCalls);
-        call_stats.put("unique contacts INCOMING calls", (double)uniqueContactsI);
 
-        call_stats.put("Average OUTGOING call duration",overallAverageDurationO);
+        call.setCallsI(incomingCalls);
+        call_stats.put("INCOMING calls", (double) incomingCalls);
+
+        call.setUniqueContactsI(uniqueContactsI);
+        call_stats.put("unique contacts INCOMING calls", (double) uniqueContactsI);
+
+        call.setAvgDurationO(overallAverageDurationO);
+        call_stats.put("Average OUTGOING call duration", overallAverageDurationO);
+
+        call.setTotalDurationO(overallTotalDurationO);
         call_stats.put("Total OUTGOING call duration", overallTotalDurationO);
-        call_stats.put("OUTGOING calls", (double)outgoingCalls);
-        call_stats.put("unique contacts OUTGOING calls", (double)uniqueContactsO);
 
-        call_stats.put("Average I + O call duration",(overallTotalDurationI + overallTotalDurationO)/(incomingCalls + outgoingCalls));
+        call.setCallsO(outgoingCalls);
+        call_stats.put("OUTGOING calls", (double) outgoingCalls);
+
+        call.setUniqueContactsO(uniqueContactsO);
+        call_stats.put("unique contacts OUTGOING calls", (double) uniqueContactsO);
+
+        call.setAverageCallDuration((overallTotalDurationI + overallTotalDurationO) / (incomingCalls + outgoingCalls));
+        call_stats.put("Average I + O call duration", (overallTotalDurationI + overallTotalDurationO) / (incomingCalls + outgoingCalls));
+
+        call.setTotalCallDuration(overallTotalDurationI + overallTotalDurationO);
         call_stats.put("Total I + O call duration", overallTotalDurationI + overallTotalDurationO);
 
-        call_stats.put("Missed calls", (double)missedCalls);
-        call_stats.put("unique contacts MISSED calls", (double)uniqueContactsM);
+        call.setMissedCalls(missedCalls);
+        call_stats.put("Missed calls", (double) missedCalls);
 
+        call.setUniqueContacts(uniqueContactsM);
+        call_stats.put("unique contacts MISSED calls", (double) uniqueContactsM);
+
+        db.callDao().insertAll(call);
+        // db.callDao().delete(call);
     }
 }

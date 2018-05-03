@@ -19,14 +19,103 @@ public class CALL {
     @ColumnInfo(name = "average_call_duration_I")
     private double avgDurationI;
 
-    @ColumnInfo(name = "average_call_duration_O")
-    private double avgDurationO;
-
     @ColumnInfo(name = "total_call_duration_I")
     private double totalDurationI;
 
+    @ColumnInfo(name = "calls_I")
+    private double callsI;
+
+    @ColumnInfo(name = "unique_contacts_I")
+    private double uniqueContactsI;
+
+    @ColumnInfo(name = "average_call_duration_O")
+    private double avgDurationO;
+
     @ColumnInfo(name = "total_call_duration_O")
     private double totalDurationO;
+
+    @ColumnInfo(name = "calls_O")
+    private double callsO;
+
+    @ColumnInfo(name = "unique_contacts_O")
+    private double uniqueContactsO;
+
+    @ColumnInfo(name = "average_call_duration") //I+O
+    private double averageCallDuration;
+
+    @ColumnInfo(name = "total_call_duration") //I+O
+    private double totalCallDuration;
+
+    @ColumnInfo(name = "missed_calls")
+    private double missedCalls;
+
+    @ColumnInfo(name = "unique_contacts") //for missed calls
+    private double uniqueContacts;
+
+    public double getCallsI() {
+        return callsI;
+    }
+
+    public void setCallsI(double callsI) {
+        this.callsI = callsI;
+    }
+
+    public double getUniqueContactsI() {
+        return uniqueContactsI;
+    }
+
+    public void setUniqueContactsI(double uniqueContactsI) {
+        this.uniqueContactsI = uniqueContactsI;
+    }
+
+
+    public double getCallsO() {
+        return callsO;
+    }
+
+    public void setCallsO(double callsO) {
+        this.callsO = callsO;
+    }
+
+    public double getUniqueContactsO() {
+        return uniqueContactsO;
+    }
+
+    public void setUniqueContactsO(double uniqueContactsO) {
+        this.uniqueContactsO = uniqueContactsO;
+    }
+
+    public double getAverageCallDuration() {
+        return averageCallDuration;
+    }
+
+    public void setAverageCallDuration(double averageCallDuration) {
+        this.averageCallDuration = averageCallDuration;
+    }
+
+    public double getTotalCallDuration() {
+        return totalCallDuration;
+    }
+
+    public void setTotalCallDuration(double totalCallDuration) {
+        this.totalCallDuration = totalCallDuration;
+    }
+
+    public double getMissedCalls() {
+        return missedCalls;
+    }
+
+    public void setMissedCalls(double missedCalls) {
+        this.missedCalls = missedCalls;
+    }
+
+    public double getUniqueContacts() {
+        return uniqueContacts;
+    }
+
+    public void setUniqueContacts(double uniqueContacts) {
+        this.uniqueContacts = uniqueContacts;
+    }
 
     public String getPhoneNumber() {
         return phoneNumber;
@@ -69,15 +158,26 @@ public class CALL {
     }
 
     @Override
-    public String toString(){
-        String result="";
+    public String toString() {
+        String result = "";
         DecimalFormat formatter = new DecimalFormat("#0.00");
 
-        result +="Phone number: " + phoneNumber + "\n";
-        result +="Average INCOMING call duration: " + formatter.format(avgDurationI) +" mins\n";
-        result +="Average OUTGOING call duration: " + formatter.format(avgDurationO) +" mins\n";
-        result +="Total INCOMING call duration: " + formatter.format(totalDurationI) +" mins\n";
-        result +="Total OUTGOING call duration: " + formatter.format(totalDurationO) +" mins\n";
+        result += "Phone number: " + phoneNumber + "\n";
+        result += "Average INCOMING call duration: " + formatter.format(avgDurationI) + " mins\n";
+        result += "Total INCOMING call duration: " + formatter.format(totalDurationI) + " mins\n";
+        result += "INCOMING calls: " + formatter.format(callsI) + "\n";
+        result += "Unique contacts INCOMING calls: " + formatter.format(uniqueContactsI) + " \n";
+
+        result += "Average OUTGOING call duration: " + formatter.format(avgDurationO) + " mins\n";
+        result += "Total OUTGOING call duration: " + formatter.format(totalDurationO) + " mins\n";
+        result += "OUTGOING calls: " + formatter.format(callsO) + " \n";
+        result += "Unique contacts OUTGOING calls: " + formatter.format(totalDurationI) + " \n";
+
+        result += "Average I + O call duration: " + formatter.format(averageCallDuration) + " mins\n";
+        result += "Total I + O call duration: " + formatter.format(totalCallDuration) + " mins\n";
+
+        result += "Missed calls: " + formatter.format(missedCalls) + " \n";
+        result += "Unique contacts MISSED calls: " + formatter.format(uniqueContacts) + " \n";
 
         return result;
     }

@@ -73,64 +73,83 @@
     <!-- Strings for personalquiz-->
     <string name="Q10"> &lt; 100</string>
     <string name="Q11"> &gt; 100</string>
-    <string name="Q12"> peste 1000</string>
+    <string name="Q12"> more than 1000</string>
     <string name="Q13"> dummy </string>
     <string name="Q14"> dummy </string>
+    <string name="Q15"> dummy </string>
+    <string name="Q16"> dummy </string>
 
     <string name="Q20"> 1</string>
     <string name="Q21"> 2</string>
     <string name="Q22"> 3</string>
     <string name="Q23"> 4</string>
-    <string name="Q24"> mai mult de 4</string>
+    <string name="Q24"> more than 4</string>
+    <string name="Q25"> dummy </string>
+    <string name="Q26"> dummy </string>
 
-    <string name="Q30"> O sun.</string>
-    <string name="Q31"> Ii scriu.</string>
-    <string name="Q32"> Depinde de situatie.</string>
+    <string name="Q30"> I call him/her.</string>
+    <string name="Q31"> I write to him/her.</string>
+    <string name="Q32"> It depends on the situation.</string>
     <string name="Q33"> dummy </string>
     <string name="Q34"> dummy </string>
+    <string name="Q35"> dummy </string>
+    <string name="Q36"> dummy </string>
 
-    <string name="Q40"> Intre 2 si 4 persoane.</string>
-    <string name="Q41"> Intre 5 si 9 persoan.e</string>
-    <string name="Q42"> Peste 10 persoane.</string>
+    <string name="Q40"> 2-4 people</string>
+    <string name="Q41"> 5-9 people </string>
+    <string name="Q42"> More than 10 people.</string>
     <string name="Q43"> dummy </string>
     <string name="Q44"> dummy </string>
+    <string name="Q45"> dummy </string>
+    <string name="Q46"> dummy </string>
 
-    <string name="Q50"> Dimineata.</string>
-    <string name="Q51"> Dupa-amiaza.</string>
-    <string name="Q52"> Seara.</string>
-    <string name="Q53"> Noaptea.</string>
+    <string name="Q50"> In the morning.</string>
+    <string name="Q51"> In the afternoon.</string>
+    <string name="Q52"> In the evening.</string>
+    <string name="Q53"> At night.</string>
     <string name="Q54"> dummy </string>
+    <string name="Q55"> dummy </string>
+    <string name="Q56"> dummy </string>
 
-    <string name="Q60"> Da.</string>
-    <string name="Q61"> Nu.</string>
+    <string name="Q60"> Yes.</string>
+    <string name="Q61"> No.</string>
     <string name="Q62"> dummy</string>
     <string name="Q63"> dummy </string>
     <string name="Q64"> dummy </string>
+    <string name="Q65"> dummy </string>
+    <string name="Q66"> dummy </string>
 
-    <string name="Q70"> Da.</string>
-    <string name="Q71"> Nu.</string>
+    <string name="Q70"> Yes.</string>
+    <string name="Q71"> No.</string>
     <string name="Q72"> dummy</string>
     <string name="Q73"> dummy </string>
     <string name="Q74"> dummy </string>
+    <string name="Q75"> dummy </string>
+    <string name="Q76"> dummy </string>
 
-    <string name="Q80"> Sugestii de imbunatatire a unor trasaturi.</string>
-    <string name="Q81"> Sugestii de cariera bazate pe rezultate.</string>
-    <string name="Q82"> Altele: </string>
+    <string name="Q80"> How to improve some of the traits.</string>
+    <string name="Q81"> Career sugestions based on the results.</string>
+    <string name="Q82"> Other: </string>
     <string name="Q83"> dummy </string>
     <string name="Q84"> dummy </string>
+    <string name="Q85"> dummy </string>
+    <string name="Q86"> dummy </string>
 
-    <string name="Q90"> Deschis catre experiente noi</string>
-    <string name="Q91"> Constiincios</string>
-    <string name="Q92"> Extrovertit</string>
-    <string name="Q93"> Agreabil</string>
-    <string name="Q94"> Nevrotic</string>
+    <string name="Q90"> Open</string>
+    <string name="Q91"> Conscientious</string>
+    <string name="Q92"> Extrovert</string>
+    <string name="Q93"> Agreeable</string>
+    <string name="Q94"> Neurotic</string>
+    <string name="Q95"> dummy </string>
+    <string name="Q96"> dummy </string>
 
-    <string name="Q100"> Da, mi se pare utila.</string>
-    <string name="Q101"> Nu, nu ma intereseaza.</string>
-    <string name="Q102"> Poate  .</string>
+    <string name="Q100"> Yes, I find it useful.</string>
+    <string name="Q101"> No, I am not interested in.</string>
+    <string name="Q102"> Maybe. </string>
     <string name="Q103"> dummy </string>
     <string name="Q104"> dummy </string>
-
+    <string name="Q105"> dummy </string>
+    <string name="Q106"> dummy </string>
 
     <string name="title_activity_about">AboutActivity</string>
     <string name="title_activity_dummy">Dummy</string>

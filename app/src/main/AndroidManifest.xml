@@ -46,7 +46,8 @@
         <activity
             android:name=".RadarChartActivity"
             android:screenOrientation="portrait" />
-        <activity android:name=".BaseActivity"></activity>
+        <activity android:name=".BaseActivity" />
+        <activity android:name=".ShowMetricsActivity"></activity>
     </application>
 
 </manifest>

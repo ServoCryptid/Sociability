@@ -21,6 +21,9 @@ public interface SMSDao {
     @Query("SELECT COUNT(*) from SMS")
     int countPhoneNumbers();
 
+    @Query("SELECT * FROM sms")
+    SMS getSMSMetrics();
+
     @Insert
     void insertAll(SMS... sms);
 

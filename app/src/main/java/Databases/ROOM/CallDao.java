@@ -18,6 +18,9 @@ public interface CallDao {
     @Query("SELECT * FROM call where phoneNumber LIKE  :phoneNumber ")
     CALL findByPhoneNumber(String phoneNumber);
 
+    @Query("SELECT * FROM call")
+    CALL getCallMetrics();
+
     @Query("SELECT COUNT(*) from call")
     int countPhoneNumbers();
 

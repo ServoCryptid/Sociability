@@ -101,13 +101,13 @@ public class SMS {
         DecimalFormat formatter = new DecimalFormat("#0.00");
 
         result +="Phone number: " + phoneNumber + "\n";
-        result +="Average message sent length: " + formatter.format(avgLengthSMSSent) +"\n";
-        result +="Average message inbox length: " + formatter.format(avgLengthSMSInbox) +"\n";
+        result +="Average message length inbox: " + formatter.format(avgLengthSMSInbox) +"\n";
+        result +="Average message length sent: " + formatter.format(avgLengthSMSSent) +"\n";
         result +="Average word length sent: " + formatter.format(avgWordLengthSent) +"\n";
         result +="Median word length sent: " + formatter.format(medianWordLengthSent)+"\n";
         result +="Messages with unique ID inbox: " + formatter.format(uniqueIDinbox)+"\n";
         result +="Messages with unique ID sent: " + formatter.format(uniqueIDsent)+"\n";
-        result +="Messages sent: " + formatter.format(smsSent)+"\n";
+        result +="Number of messages sent: " + formatter.format(smsSent)+"\n";
 
         return result;
     }
