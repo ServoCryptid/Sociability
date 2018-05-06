@@ -31,7 +31,7 @@
       2.	The User Data may be processed only for identification of and communication with the User, administration and enhancement of the Application statistical purposes, so only for Politehnica University of Timisoara internal purposes. Such processing may also comprise coordination with other information, both within and outside the EU/EEA.
       </p>
       <p>
-        3.	The data Politehnica University of Timisoara collects from the User are metrics based on the analysis of the call and SMS logs. Those metrics extracted are for SMS : average SMS length (inbox/sent), messages with uniwue ID (inbox/sent), average word length (sent), median word length (sent), number of messages (sent). From the call log, the metrics extracted are: unique calls (Outgoing/ Incoming), outgoing calls, incoming calls, average duration (Outgoing/ Incoming), total duration (Outgoing/ Incoming ), average duration (Incoming + Outgoing), total duration (Incoming +Outgoing), missed calls , unique contacts.      </p>
+        3.	The data Politehnica University of Timisoara collects from the User are metrics based on the analysis of the call and SMS logs. Those metrics extracted are for SMS : average SMS length (inbox/sent), messages with unique ID (inbox/sent), average word length (sent), median word length (sent), number of messages (sent). From the call log, the metrics extracted are: unique calls (Outgoing/ Incoming), outgoing calls, incoming calls, average duration (Outgoing/ Incoming), total duration (Outgoing/ Incoming ), average duration (Incoming + Outgoing), total duration (Incoming +Outgoing), missed calls , unique contacts.      </p>
       <p>
         4.	Politehnica University of Timisoara does not publish or disclose the User&#39;s non-public contacts without authorization. Politehnica University of Timisoara does not pass on the User Data to any third party without the User&#39;s permission, except as set out in these Terms or in circumstances where governmental bodies that have jurisdiction (e.g. courts and law enforcement agencies) are entitled to access or requests access to the User Data.
       </p>
@@ -64,11 +64,11 @@
     <string name="option7_text_quiz1"> Agree strongly </string>
 
     <!-- Strings for long quiz-->
-    <string name="option1_text_quiz2">Very Inaccurate </string>
-    <string name="option2_text_quiz2"> Moderately Inaccurate</string>
-    <string name="option3_text_quiz2"> Neither Accurate Nor Inaccurate </string>
-    <string name="option4_text_quiz2"> Moderately Accurate </string>
-    <string name="option5_text_quiz2"> Very Accurate </string>
+    <string name="option0">Very Inaccurate </string>
+    <string name="option1"> Moderately Inaccurate</string>
+    <string name="option2"> Neither Accurate Nor Inaccurate </string>
+    <string name="option3"> Moderately Accurate </string>
+    <string name="option4"> Very Accurate </string>
 
     <!-- Strings for personalquiz-->
     <string name="Q10"> &lt; 100</string>

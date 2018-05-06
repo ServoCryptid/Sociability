@@ -24,7 +24,7 @@ import java.util.List;
 import Databases.Firebase.FirebaseDB;
 
 public class RadarChartActivity extends BaseActivity implements View.OnClickListener{
-    private RadarView mRadarView;
+    public static RadarView mRadarView;
     private static final int MY_PERMISSIONS_REQUESTS = 333;
     public static FirebaseDB fDB;
 
@@ -36,8 +36,10 @@ public class RadarChartActivity extends BaseActivity implements View.OnClickList
             add(new RadarHolder("E", 4));
             add(new RadarHolder("A", 4));
             add(new RadarHolder("N", 2));
+
         }
     };
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,6 +48,7 @@ public class RadarChartActivity extends BaseActivity implements View.OnClickList
 
         mRadarView = findViewById(R.id.radar);
         mRadarView.setData(mData);
+        mRadarView.setMaxValue(10);
         mRadarView.setInteractive(false);
 
         Button b = (Button)findViewById(R.id.goTo_quiz_button);
@@ -80,7 +83,6 @@ public class RadarChartActivity extends BaseActivity implements View.OnClickList
 
     }
 
-
     @Override
     public void onClick(View v) {
         // Perform action on click
@@ -100,6 +102,9 @@ public class RadarChartActivity extends BaseActivity implements View.OnClickList
         boolean hasPermissionReadSMSLog = (ContextCompat.checkSelfPermission(getApplicationContext(),
                 android.Manifest.permission.READ_SMS) == PackageManager.PERMISSION_GRANTED);
 
+        boolean hasPermissionReadPhoneState = (ContextCompat.checkSelfPermission(getApplicationContext(),
+                Manifest.permission.READ_PHONE_STATE) == PackageManager.PERMISSION_GRANTED);
+
         List<String> listPermissionsNeeded = new ArrayList<>();
 
         if (!hasPermissionReadCallLog) {
@@ -108,6 +113,10 @@ public class RadarChartActivity extends BaseActivity implements View.OnClickList
 
         if (!hasPermissionReadSMSLog) {
             listPermissionsNeeded.add(android.Manifest.permission.READ_SMS);
+        }
+
+        if (!hasPermissionReadPhoneState) {
+            listPermissionsNeeded.add(Manifest.permission.READ_PHONE_STATE);
         }
 
         if (!listPermissionsNeeded.isEmpty()) {

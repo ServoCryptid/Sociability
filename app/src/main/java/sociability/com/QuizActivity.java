@@ -60,6 +60,11 @@ public class QuizActivity extends BaseActivity {
             ((RadioButton) radioGroup.getChildAt(5)).setVisibility(View.GONE);
             ((RadioButton) radioGroup.getChildAt(6)).setVisibility(View.GONE);
 
+            for(int i = 0;i < (radioGroup.getChildCount() - 2) ;i++){
+                String questionText = "option" + i;
+                questionText = getStringResourceByName(questionText);
+                ((RadioButton) radioGroup.getChildAt(i)).setText(questionText);
+            }
         }
         else {
             quiz_questions = quiz_questions_short;

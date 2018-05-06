@@ -8,16 +8,10 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.provider.CallLog;
 import android.telephony.TelephonyManager;
-
-import java.lang.reflect.Array;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
-
-import Databases.Firebase.FirebaseDB;
-import Databases.ROOM.AppDatabase;
 import Databases.ROOM.CALL;
 import Databases.ROOM.SMS;
 import Entities.CallSample;
@@ -25,8 +19,6 @@ import Entities.SMSSample;
 import Filters.StatisticalMeasuresCall;
 import Filters.StatisticalMeasuresSMS;
 import sociability.com.FirstScreenActivity;
-import sociability.com.MainActivity;
-
 import static Helper.Utils.checkForZeroCall;
 import static Helper.Utils.checkForZeroMessages;
 import static Helper.Utils.checkIfNumberExists;
@@ -45,8 +37,6 @@ public class FetchLogs extends AsyncTask<Void, Void, Void> {
     TelephonyManager tm;
     private HashMap<String, Double> sms_stats = new HashMap<String, Double>();
     private HashMap<String, Double> call_stats = new HashMap<String, Double>();
-    public static ArrayList<String> call_metrics = new ArrayList<String>();
-
 
     public FetchLogs(ProgressDialog pD, Context c) {
         this.mProgressDialog = pD;

@@ -1,5 +1,9 @@
 package Helper;
 
+import android.support.annotation.NonNull;
+
+import com.ultramegasoft.radarchart.RadarHolder;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -7,6 +11,7 @@ import java.util.List;
 import Databases.ROOM.AppDatabase;
 
 import static sociability.com.RadarChartActivity.fDB;
+import static sociability.com.RadarChartActivity.mRadarView;
 
 
 public class ComputeResults {
@@ -134,6 +139,7 @@ public class ComputeResults {
                     break;
             }
         }
+
         results.put("Openness ", O + "/ "+ O_max );
 
         results.put("Conscientiousness " , C +"/ "+ C_max );
@@ -144,6 +150,18 @@ public class ComputeResults {
 
         results.put("Neuroticism ", N +"/ "+ N_max);
 
+        final int valO = O-25, valC = C-25, valE = E-27, valA = A-22, valN = N-25;
+        @NonNull
+        ArrayList<RadarHolder> mData2 = new ArrayList<RadarHolder>() {// The data for the RadarView
+            {
+                add(new RadarHolder("O", valO));
+                add(new RadarHolder("C", valC));
+                add(new RadarHolder("E", valE));
+                add(new RadarHolder("A", valA));
+                add(new RadarHolder("N", valN));
+            }
+        };
+        mRadarView.setData(mData2);
         fDB.updateResponsesToDB_longQuiz(results);
 
         return results.toString();
