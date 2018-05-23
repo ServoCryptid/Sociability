@@ -22,6 +22,8 @@ import android.widget.TextView;
 import Databases.Firebase.FirebaseQuizzes;
 import Databases.ROOM.AppDatabase;
 
+import static Helper.Utils.isNetworkAvailable;
+
 public class FirstScreenActivity extends BaseActivity implements View.OnClickListener {
     private StringBuffer notificationMsg;
     private  FirebaseQuizzes fq;
@@ -131,8 +133,15 @@ public class FirstScreenActivity extends BaseActivity implements View.OnClickLis
 
     //    notificationMsg = new StringBuffer();*/
      //   LocalBroadcastManager.getInstance(this).registerReceiver(onNotice, new IntentFilter("Msg"));
+    }
 
-
+    public  void refreshActivity(View v){
+        if(isNetworkAvailable(this)){
+            findViewById(R.id.no_internet_layout).setVisibility(View.GONE);
+            Intent intent = new Intent(this, RadarChartActivity.class);
+            startActivity(intent);
+            this.finish();
+        }
     }
 
     @Override
@@ -140,10 +149,15 @@ public class FirstScreenActivity extends BaseActivity implements View.OnClickLis
         // Perform action on click
         switch(v.getId()) {
             case R.id.start_button:
-            //start the RadarChart activity
+            //start the RadarChart activity if internet is turned on
                // Intent intent = new Intent(this, MainActivity.class);
-                Intent intent = new Intent(this, RadarChartActivity.class);
-                startActivity(intent);
+                if(isNetworkAvailable(this)) {
+                    Intent intent = new Intent(this, RadarChartActivity.class);
+                    startActivity(intent);
+                }
+                else{
+                    setContentView(R.layout.no_internet_layout);
+                }
                 break;
         }
     }

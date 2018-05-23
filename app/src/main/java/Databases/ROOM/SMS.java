@@ -100,12 +100,12 @@ public class SMS {
         String result="";
         DecimalFormat formatter = new DecimalFormat("#0.00");
 
-        result +="Phone number: " + phoneNumber + "\n";
-        result +="Average message length inbox: " + formatter.format(avgLengthSMSInbox) +"\n";
+       // result +="Phone number: " + phoneNumber + "\n";
+        result +="Average message length inbox: " + "65.41" +"\n"; //dummy
         result +="Average message length sent: " + formatter.format(avgLengthSMSSent) +"\n";
         result +="Average word length sent: " + formatter.format(avgWordLengthSent) +"\n";
         result +="Median word length sent: " + formatter.format(medianWordLengthSent)+"\n";
-        result +="Messages with unique ID inbox: " + formatter.format(uniqueIDinbox)+"\n";
+        result +="Messages with unique ID inbox: " + "42.00"+"\n"; //dummy
         result +="Messages with unique ID sent: " + formatter.format(uniqueIDsent)+"\n";
         result +="Number of messages sent: " + formatter.format(smsSent)+"\n";
 

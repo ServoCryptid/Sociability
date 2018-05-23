@@ -149,4 +149,6 @@ public class RadarChartActivity extends BaseActivity implements View.OnClickList
         finish();
         startActivity(getIntent());
     }
+    @Override
+    public void onBackPressed() { } //disable the back button for this activity
 }

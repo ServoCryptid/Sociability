@@ -162,7 +162,7 @@ public class CALL {
         String result = "";
         DecimalFormat formatter = new DecimalFormat("#0.00");
 
-        result += "Phone number: " + phoneNumber + "\n";
+       // result += "Phone number: " + phoneNumber + "\n";
         result += "Average INCOMING call duration: " + formatter.format(avgDurationI) + " mins\n";
         result += "Total INCOMING call duration: " + formatter.format(totalDurationI) + " mins\n";
         result += "INCOMING calls: " + formatter.format(callsI) + "\n";
