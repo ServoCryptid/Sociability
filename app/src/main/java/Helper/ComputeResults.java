@@ -31,56 +31,98 @@ public class ComputeResults {
         double N=0;
 
         O = (quiz_answers.get(4) + reversed[quiz_answers.get(9)-1])/2;
-        if(0 <= O && O<=4.30)
-            results.put("openness"," Low");
+        if(0 <= O && O<=4.30) {
+            results.put("openness", " Low");
+            O = 1;
+        }
         else
-        if(4.31<=O && O <=6.44)
-            results.put("openness"," Medium");
+            if(4.31<=O && O <=6.44) {
+                results.put("openness", " Medium");
+                O = 5;
+            }
         else
-        if(6.45<=O && O<=7.00)
-            results.put("openness"," High");
+            if(6.45<=O && O<=7.00) {
+                results.put("openness", " High");
+                O = 10;
+            }
 
         C = (quiz_answers.get(2) + reversed[quiz_answers.get(7)-1])/2;
-        if(0 <= C && C<=4.07)
-            results.put("conscientiousness "," Low");
+        if(0 <= C && C<=4.07) {
+            results.put("conscientiousness ", " Low");
+            C = 1;
+        }
         else
-        if(4.08<=C && C <=6.71)
-            results.put("conscientiousness"," Medium");
+            if(4.08<=C && C <=6.71) {
+                results.put("conscientiousness", " Medium");
+                C = 5;
+            }
         else
-        if(6.72<=C && C<=7.00)
-            results.put("conscientiousness"," High");
+            if(6.72<=C && C<=7.00) {
+                results.put("conscientiousness", " High");
+                C = 10;
+            }
 
         E = (double)(quiz_answers.get(0) + reversed[quiz_answers.get(5)-1])/2;
-        if(0 <= E && E<=2.98)
-            results.put("extraversion "," Low");
+        if(0 <= E && E<=2.98) {
+            results.put("extraversion ", " Low");
+            E = 1;
+        }
         else
-        if(2.99<=E && E <=5.88)
-            results.put("extraversion"," Medium");
+             if(2.99<=E && E <=5.88) {
+                 results.put("extraversion", " Medium");
+                 E = 5;
+            }
         else
-        if(5.89<=E && E<=7.00)
-            results.put("extraversion"," High");
+            if(5.89<=E && E<=7.00) {
+                results.put("extraversion", " High");
+                E = 10;
+            }
 
         A = (quiz_answers.get(6) + reversed[quiz_answers.get(1)-1])/2;
-        if(0 <= A && A<=4.11)
-            results.put("agreeableness "," Low");
+        if(0 <= A && A<=4.11) {
+            results.put("agreeableness ", " Low");
+            A = 1;
+        }
         else
-        if(4.12<=A && A <=6.33)
-            results.put("agreeableness "," Medium");
+            if(4.12<=A && A <=6.33) {
+                results.put("agreeableness ", " Medium");
+                A = 5;
+            }
         else
-        if(6.34<=A && A<=7.00)
-            results.put("agreeableness "," High");
+            if(6.34<=A && A<=7.00) {
+                results.put("agreeableness ", " High");
+                A = 10;
+            }
 
         N = (quiz_answers.get(3) + reversed[quiz_answers.get(8)-1])/2;
-        if(0 <= N && N<=3.40)
-            results.put("neuroticism "," Low");
+        if(0 <= N && N<=3.40) {
+            results.put("neuroticism ", " Low");
+            N = 1;
+        }
         else
-        if(3.41<=N && N <=6.24)
-            results.put("neuroticism "," Medium");
+             if(3.41<=N && N <=6.24) {
+                 results.put("neuroticism ", " Medium");
+                 N = 5;
+             }
         else
-        if(6.25<=N && N<=7.00)
-            results.put("neuroticism "," High");
+             if(6.25<=N && N<=7.00) {
+                 results.put("neuroticism ", " High");
+                 N = 10;
+             }
 
+        final int O_radar = (int)O,C_radar = (int)C, E_radar = (int)E, A_radar = (int)A, N_radar = (int)N;
 
+        @NonNull
+        ArrayList<RadarHolder> mData2 = new ArrayList<RadarHolder>() {// The data for the RadarView
+            {
+                add(new RadarHolder("O", O_radar));
+                add(new RadarHolder("C", C_radar));
+                add(new RadarHolder("E", E_radar));
+                add(new RadarHolder("A", A_radar));
+                add(new RadarHolder("N", N_radar));
+            }
+        };
+        mRadarView.setData(mData2);
         //update the DB
         fDB.updateResponsesToDB_shortQuiz(results);
 
@@ -89,11 +131,11 @@ public class ComputeResults {
 
     public static String getLongQuizResult(List<Integer> quiz_answers){ //TODO: refactor this
         HashMap<String,String> results = new HashMap<String,String>();
-        int O=0, O_max=0;
-        int C=0, C_max=0;
-        int E=0, E_max=0;
-        int A=0, A_max=0;
-        int N=0, N_max=0;
+        int O=0, O_max = 50;
+        int C=0, C_max = 50;
+        int E=0, E_max = 50;
+        int A=0, A_max = 50;
+        int N=0, N_max = 50;
 
         for(int i=1;i<=50;i++){
             switch(i%5){
@@ -103,7 +145,6 @@ public class ComputeResults {
                     else
                         O += 6 - quiz_answers.get(i-1); //it's inverted see: http://ipip.ori.org/newScoringInstructions.htm
 
-                    O_max+= quiz_answers.get(i-1);
                     break;
                 case 2:
                     if(long_quiz_scores.get(i).charAt(1)=='+') // the model in score_points +/-
@@ -111,7 +152,6 @@ public class ComputeResults {
                     else
                         C += 6 - quiz_answers.get(i-1); //it's inverted see: http://ipip.ori.org/newScoringInstructions.htm
 
-                    C_max += quiz_answers.get(i-1);
                     break;
                 case 3:
                     if(long_quiz_scores.get(i).charAt(1)=='+') // the model in score_points +/-
@@ -119,7 +159,6 @@ public class ComputeResults {
                     else
                         E += 6 - quiz_answers.get(i-1); //it's inverted see: http://ipip.ori.org/newScoringInstructions.htm
 
-                    E_max+= quiz_answers.get(i-1);
                     break;
                 case 4:
                     if(long_quiz_scores.get(i).charAt(1)=='+') // the model in score_points +/-
@@ -127,7 +166,6 @@ public class ComputeResults {
                     else
                         A += 6 - quiz_answers.get(i-1); //it's inverted see: http://ipip.ori.org/newScoringInstructions.htm
 
-                    A_max+= quiz_answers.get(i-1);
                     break;
                 case 0:
                     if(long_quiz_scores.get(i).charAt(1)=='+') // the model in score_points +/-
@@ -135,7 +173,6 @@ public class ComputeResults {
                     else
                         N += 6 - quiz_answers.get(i-1); //it's inverted see: http://ipip.ori.org/newScoringInstructions.htm
 
-                    N_max+= quiz_answers.get(i-1);
                     break;
             }
         }
@@ -150,7 +187,7 @@ public class ComputeResults {
 
         results.put("Neuroticism ", N +"/ "+ N_max);
 
-        final int valO = O-25, valC = C-25, valE = E-27, valA = A-22, valN = N-25;
+        final int valO = (int)(O*0.2), valC = (int)(C*0.2), valE = (int)(E*0.2), valA = (int)(A*0.2), valN = (int)(N*0.2);
         @NonNull
         ArrayList<RadarHolder> mData2 = new ArrayList<RadarHolder>() {// The data for the RadarView
             {
