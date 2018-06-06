@@ -2,16 +2,17 @@ package Helper;
 
 import android.app.ProgressDialog;
 import android.content.Context;
-import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.provider.CallLog;
 import android.telephony.TelephonyManager;
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+
 import Databases.ROOM.CALL;
 import Databases.ROOM.SMS;
 import Entities.CallSample;
@@ -19,6 +20,7 @@ import Entities.SMSSample;
 import Filters.StatisticalMeasuresCall;
 import Filters.StatisticalMeasuresSMS;
 import sociability.com.FirstScreenActivity;
+
 import static Helper.Utils.checkForZeroCall;
 import static Helper.Utils.checkForZeroMessages;
 import static Helper.Utils.checkIfNumberExists;
@@ -75,8 +77,15 @@ public class FetchLogs extends AsyncTask<Void, Void, Void> {
 
     private List<CallSample> getCallDetails() {
         List<CallSample> callList = new ArrayList<CallSample>();
+        String [] projection = null, selectionArgs = null;
+        String selection = null, sortOrder = null;
         StringBuffer sb = new StringBuffer();
-        Cursor cursor = mContext.getContentResolver().query(CallLog.Calls.CONTENT_URI, null, null, null, null);
+        Cursor cursor = mContext.getContentResolver().query(
+                CallLog.Calls.CONTENT_URI, // The content URI of the call table
+                projection, // The columns to return for each row
+                selection, // Selection criteria
+                selectionArgs, // Selection criteria
+                sortOrder); // The sort order for the returned rows
 
         int number = cursor.getColumnIndex(CallLog.Calls.NUMBER);
         int type = cursor.getColumnIndex(CallLog.Calls.TYPE);
@@ -243,7 +252,11 @@ public class FetchLogs extends AsyncTask<Void, Void, Void> {
             sms.setSmsSent(noOfSMS);
             sms_stats.put("Number of messages " + type, (double) noOfSMS);
         }
-        db.smsDao().insertAll(sms);
+
+        if(type.equals("sent"))
+            db.smsDao().insertAll(sms);
+        else
+            db.smsDao().update(sms.getUniqueIDinbox(), sms.getAvgLengthSMSInbox());
         //db.smsDao().delete(sms);
     }
 

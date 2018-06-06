@@ -60,7 +60,7 @@ public class FirstScreenActivity extends BaseActivity implements View.OnClickLis
 
          //room db
         db = AppDatabase.getAppDatabase(this); //get my ROOM database instance //todo: see where you should close the db
-
+        db.smsDao();
 
          //region Retrieving the Quiz questions from Firebase
 
