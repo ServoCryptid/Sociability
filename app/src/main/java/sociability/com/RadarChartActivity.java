@@ -23,10 +23,22 @@ import java.util.List;
 
 import Databases.Firebase.FirebaseDB;
 
+import static sociability.com.FirstScreenActivity.Along;
+import static sociability.com.FirstScreenActivity.Ashort;
+import static sociability.com.FirstScreenActivity.Clong;
+import static sociability.com.FirstScreenActivity.Cshort;
+import static sociability.com.FirstScreenActivity.Elong;
+import static sociability.com.FirstScreenActivity.Eshort;
+import static sociability.com.FirstScreenActivity.Nlong;
+import static sociability.com.FirstScreenActivity.Nshort;
+import static sociability.com.FirstScreenActivity.Olong;
+import static sociability.com.FirstScreenActivity.Oshort;
+
 public class RadarChartActivity extends BaseActivity implements View.OnClickListener{
     public static RadarView mRadarView;
     private static final int MY_PERMISSIONS_REQUESTS = 333;
     public static FirebaseDB fDB;
+    private ArrayList<RadarHolder> radarData = new ArrayList<RadarHolder>();
 
     @NonNull
     private ArrayList<RadarHolder> mData = new ArrayList<RadarHolder>() {// The data for the RadarView
@@ -54,6 +66,14 @@ public class RadarChartActivity extends BaseActivity implements View.OnClickList
         Button b = (Button)findViewById(R.id.goTo_quiz_button);
         b.setOnClickListener(this);
         b.setBackgroundColor(getResources().getColor(R.color.colorAccent));
+
+        Button b1 = (Button)findViewById(R.id.buttonAfterFirstQ);
+        b1.setOnClickListener(this);
+        b1.setBackgroundColor(getResources().getColor(R.color.colorAccent));
+
+        Button b2 = (Button)findViewById(R.id.buttonAfterSecondQ);
+        b2.setOnClickListener(this);
+        b2.setBackgroundColor(getResources().getColor(R.color.colorAccent));
 
         if(FirstScreenActivity.agree_terms == 0){
             if (checkAndRequestPermissions()) {
@@ -91,6 +111,28 @@ public class RadarChartActivity extends BaseActivity implements View.OnClickList
                 //start the main activity
                 Intent intent = new Intent(this, MainActivity.class);
                 startActivity(intent);
+                break;
+            case R.id.buttonAfterFirstQ:
+                //update the chart with the answers for the TIPI quiz
+                radarData.clear();
+                radarData.add(new RadarHolder("O",Oshort));
+                radarData.add(new RadarHolder("C",Cshort));
+                radarData.add(new RadarHolder("E",Eshort));
+                radarData.add(new RadarHolder("A",Ashort));
+                radarData.add(new RadarHolder("N",Nshort));
+
+                mRadarView.setData(radarData);
+                break;
+            case R.id.buttonAfterSecondQ:
+                //update the radarchart with the answers for the IPIP quiz
+                radarData.clear();
+                radarData.add(new RadarHolder("O",Olong));
+                radarData.add(new RadarHolder("C",Clong));
+                radarData.add(new RadarHolder("E",Elong));
+                radarData.add(new RadarHolder("A",Along));
+                radarData.add(new RadarHolder("N",Nlong));
+
+                mRadarView.setData(radarData);
                 break;
         }
     }

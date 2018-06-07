@@ -34,6 +34,8 @@ public class FirstScreenActivity extends BaseActivity implements View.OnClickLis
     public static int long_quiz_completed = 0 ;// - if not completed, 1 for completed
     public static int personal_quiz_completed = 0 ;// - if not completed, 1 for completed
     public static int agree_terms = 0;
+    public static int Oshort, Cshort, Eshort, Ashort, Nshort;
+    public static int Olong, Clong, Elong, Along, Nlong;
 
 
     @Override
@@ -50,6 +52,18 @@ public class FirstScreenActivity extends BaseActivity implements View.OnClickLis
         long_quiz_completed  = prefsUser.getInt("long", 0);
         personal_quiz_completed  = prefsUser.getInt("personal", 0);
         agree_terms = prefsUser.getInt("agree_terms", 0);
+
+        Oshort = prefsUser.getInt("Oshort", 0);
+        Cshort = prefsUser.getInt("Cshort", 0);
+        Eshort = prefsUser.getInt("Eshort", 0);
+        Ashort = prefsUser.getInt("Ashort", 0);
+        Nshort = prefsUser.getInt("Nshort", 0);
+
+        Olong = prefsUser.getInt("Olong", 0);
+        Clong = prefsUser.getInt("Clong", 0);
+        Elong = prefsUser.getInt("Elong", 0);
+        Along = prefsUser.getInt("Along", 0);
+        Nlong = prefsUser.getInt("Nlong", 0);
 
          final Button b = (Button) findViewById(R.id.start_button);
          final Drawable d = b.getBackground();

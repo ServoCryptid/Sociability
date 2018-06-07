@@ -9,6 +9,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import Databases.ROOM.AppDatabase;
+import sociability.com.FirstScreenActivity;
 
 import static sociability.com.RadarChartActivity.fDB;
 import static sociability.com.RadarChartActivity.mRadarView;
@@ -112,6 +113,18 @@ public class ComputeResults {
 
         final int O_radar = (int)O,C_radar = (int)C, E_radar = (int)E, A_radar = (int)A, N_radar = (int)N;
 
+        FirstScreenActivity.Oshort = O_radar;
+        FirstScreenActivity.Cshort = C_radar;
+        FirstScreenActivity.Eshort = E_radar;
+        FirstScreenActivity.Ashort = A_radar;
+        FirstScreenActivity.Nshort = N_radar;
+
+        FirstScreenActivity.prefsUser.edit().putInt("Oshort", O_radar).apply();
+        FirstScreenActivity.prefsUser.edit().putInt("Cshort", C_radar).apply();
+        FirstScreenActivity.prefsUser.edit().putInt("Eshort", E_radar).apply();
+        FirstScreenActivity.prefsUser.edit().putInt("Ashort", A_radar).apply();
+        FirstScreenActivity.prefsUser.edit().putInt("Nshort", N_radar).apply();
+
         @NonNull
         ArrayList<RadarHolder> mData2 = new ArrayList<RadarHolder>() {// The data for the RadarView
             {
@@ -188,6 +201,19 @@ public class ComputeResults {
         results.put("Neuroticism ", N +"/ "+ N_max);
 
         final int valO = (int)(O*0.2), valC = (int)(C*0.2), valE = (int)(E*0.2), valA = (int)(A*0.2), valN = (int)(N*0.2);
+
+        FirstScreenActivity.Olong = valO;
+        FirstScreenActivity.Clong = valC;
+        FirstScreenActivity.Elong = valE;
+        FirstScreenActivity.Along = valA;
+        FirstScreenActivity.Nlong = valN;
+
+        FirstScreenActivity.prefsUser.edit().putInt("Olong", valO).apply();
+        FirstScreenActivity.prefsUser.edit().putInt("Clong", valC).apply();
+        FirstScreenActivity.prefsUser.edit().putInt("Elong", valE).apply();
+        FirstScreenActivity.prefsUser.edit().putInt("Along", valA).apply();
+        FirstScreenActivity.prefsUser.edit().putInt("Nlong", valN).apply();
+
         @NonNull
         ArrayList<RadarHolder> mData2 = new ArrayList<RadarHolder>() {// The data for the RadarView
             {
