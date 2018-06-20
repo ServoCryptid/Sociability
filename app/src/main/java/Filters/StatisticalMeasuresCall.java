@@ -8,7 +8,7 @@ import java.util.List;
 
 public class StatisticalMeasuresCall extends StatisticalMeasures{
 
-    public static  double averageDuration(List<String> callDurations){ // the call duration is returned in minutes
+    public static  double averageDuration(List<String> callDurations){ // the call duration is returned in hours
         double totalDuration = 0;
         String temp;
 
@@ -17,10 +17,10 @@ public class StatisticalMeasuresCall extends StatisticalMeasures{
             totalDuration += Integer.parseInt(temp);
         }
 
-        return totalDuration/(callDurations.size()*60);
+        return totalDuration/(callDurations.size());
     }
 
-    public static double totalDuration(List<String> callDurations){ // the call duration is returned in minutes
+    public static double totalDuration(List<String> callDurations){ // the call duration is returned in hours
         double totalDuration = 0;
         String temp;
 
@@ -29,6 +29,6 @@ public class StatisticalMeasuresCall extends StatisticalMeasures{
             totalDuration += Integer.parseInt(temp);
         }
 
-        return totalDuration/60;
+        return totalDuration/3600;
     }
 }

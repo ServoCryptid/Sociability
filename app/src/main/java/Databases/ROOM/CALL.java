@@ -25,6 +25,9 @@ public class CALL {
     @ColumnInfo(name = "calls_I")
     private double callsI;
 
+    @ColumnInfo(name = "calls_log_hours")
+    private double call_log_hours;
+
     @ColumnInfo(name = "unique_contacts_I")
     private double uniqueContactsI;
 
@@ -51,6 +54,12 @@ public class CALL {
 
     @ColumnInfo(name = "unique_contacts") //for missed calls
     private double uniqueContacts;
+
+    @ColumnInfo(name = "most_incoming_calls")
+    private String mostIncomingCalls;
+
+    @ColumnInfo(name = "most_outgoing_calls")
+    private String mostOutgoingCalls;
 
     public double getCallsI() {
         return callsI;
@@ -157,6 +166,31 @@ public class CALL {
         this.totalDurationO = totalDuration;
     }
 
+    public double getCall_log_hours() {
+        return call_log_hours;
+    }
+
+    public void setCall_log_hours(double call_log_hours) {
+        this.call_log_hours = call_log_hours;
+    }
+
+    public String getMostIncomingCalls() {
+        return mostIncomingCalls;
+    }
+
+    public void setMostIncomingCalls(String mostIncomingCalls) {
+        this.mostIncomingCalls = mostIncomingCalls;
+    }
+
+    public String getMostOutgoingCalls() {
+        return mostOutgoingCalls;
+    }
+
+    public void setMostOutgoingCalls(String mostOutgoingCalls) {
+        this.mostOutgoingCalls = mostOutgoingCalls;
+    }
+
+
     @Override
     public String toString() {
         String result = "";
@@ -178,6 +212,12 @@ public class CALL {
 
         result += "Missed calls: " + formatter.format(missedCalls) + " \n";
         result += "Unique contacts MISSED calls: " + formatter.format(uniqueContacts) + " \n";
+
+        result += "Call log hours: " + formatter.format(call_log_hours) + " \n";
+
+        result += "Most INCOMING calls made in the: " + mostIncomingCalls + " \n";
+        result += "Most OUTGOING calls made in the: " + mostOutgoingCalls + " \n";
+
 
         return result;
     }

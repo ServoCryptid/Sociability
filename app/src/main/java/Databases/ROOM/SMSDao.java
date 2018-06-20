@@ -28,7 +28,13 @@ public interface SMSDao {
     void insertAll(SMS... sms);
 
     @Query("UPDATE SMS SET sms_with_unique_ID_inbox = :uniqueIDinbox, average_length_sms_inbox = :avgSMSlengthInbox ")
-    void update(int uniqueIDinbox, double avgSMSlengthInbox);
+    void updateAvgSMSLengthI(int uniqueIDinbox, double avgSMSlengthInbox);
+
+    @Query("UPDATE SMS SET sms_with_unique_ID_inbox = :uniqueIDinbox, sms_inbox = :smsInbox ")
+    void updateSMSI(int uniqueIDinbox, double smsInbox);
+
+    @Query("UPDATE SMS SET sms_with_unique_ID_inbox = :uniqueIDinbox, most_received_sms = :daytime ")
+    void updateMostReceived(int uniqueIDinbox, String daytime);
 
     @Delete
     void delete(SMS sms);

@@ -34,11 +34,11 @@ public class FirebaseDB  {
         databaseReference.setValue(quizAnswers);
     }
 
-    public void updateStatsToDB(HashMap<String,Double> list){
+    public void updateStatsToDB(HashMap<String,String> list){
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         databaseReference = database.getReference();
 
-        if(list.size() == 12)
+        if(list.size() == 15)
             databaseReference.child("Users").child(simSerialNumber).child("phone_stats").child("Call").setValue(list);
         else
             databaseReference.child("Users").child(simSerialNumber).child("phone_stats").child("SMS").setValue(list);

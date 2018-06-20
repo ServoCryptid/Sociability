@@ -76,7 +76,5 @@ public class StatisticalMeasuresSMS extends StatisticalMeasures{
                 return (double)(wordLengths.get((wordLengths.size()/2)-1)+wordLengths.get(wordLengths.size()/2))/2;
             else
                 return 0;
-
-
     }
 }

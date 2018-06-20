@@ -37,6 +37,15 @@ public class SMS {
     @ColumnInfo(name = "sms_sent")
     private int smsSent=0;
 
+    @ColumnInfo(name = "sms_inbox")
+    private int smsInbox=0;
+
+    @ColumnInfo(name = "most_received_sms")
+    private String mostReceivedSMS;
+
+    @ColumnInfo(name = "most_sent_sms")
+    private String mostSentSMS;
+
     public  void setPhoneNumber(String phoneNumber) {
         this.phoneNumber = phoneNumber;
     }
@@ -95,6 +104,31 @@ public class SMS {
         return smsSent;
     }
 
+
+    public int getSmsInbox() {
+        return smsInbox;
+    }
+
+    public void setSmsInbox(int smsInbox) {
+        this.smsInbox = smsInbox;
+    }
+
+    public String getMostReceivedSMS() {
+        return mostReceivedSMS;
+    }
+
+    public void setMostReceivedSMS(String mostReceivedSMS) {
+        this.mostReceivedSMS = mostReceivedSMS;
+    }
+
+    public String getMostSentSMS() {
+        return mostSentSMS;
+    }
+
+    public void setMostSentSMS(String mostSentSMS) {
+        this.mostSentSMS = mostSentSMS;
+    }
+
     @Override
     public String toString(){
         String result="";
@@ -108,6 +142,10 @@ public class SMS {
         result +="Messages with unique ID inbox: " + formatter.format(uniqueIDinbox)+"\n";
         result +="Messages with unique ID sent: " + formatter.format(uniqueIDsent)+"\n";
         result +="Number of messages sent: " + formatter.format(smsSent)+"\n";
+        result +="Number of messages inbox: " + formatter.format(smsInbox)+"\n";
+        result +="SMS most received in the : " + mostReceivedSMS+"\n";
+        result +="SMS most sent in the: " + mostSentSMS+"\n";
+
 
         return result;
     }

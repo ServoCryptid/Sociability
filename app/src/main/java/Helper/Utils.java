@@ -24,6 +24,13 @@ public class Utils {
         return finalDate;
     }
 
+    public static boolean isBetween(int hour, int start, int end) { //check if a given hour is between a defined time interval
+          if(start <= hour && hour < end)// Exclusive of end.
+              return true;
+
+          return false;
+    }
+
     public static int checkIfObjExists(List<SMSSample> list, SMSSample sample){ // check if the number is already in the list //todo: change this (duplicate code)
         int i;
         SMSSample aux;
