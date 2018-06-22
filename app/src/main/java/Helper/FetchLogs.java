@@ -7,6 +7,7 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.provider.CallLog;
 import android.telephony.TelephonyManager;
+import android.util.Log;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
@@ -123,7 +124,6 @@ public class FetchLogs extends AsyncTask<Void, Void, Void> {
             hour = Utils.millisToDate(Long.parseLong(callDate)).substring(11,13);
             int dircode = Integer.parseInt(callType);
 
-
             switch (dircode) {
                 case CallLog.Calls.OUTGOING_TYPE:
                     dir = "outgoing";
@@ -204,15 +204,18 @@ public class FetchLogs extends AsyncTask<Void, Void, Void> {
         String smsBody = "";
 
         //reinitialize the 2 dictionaries
-        mapActionsReceived.put("morning", 0);
-        mapActionsReceived.put("afternoon", 0);
-        mapActionsReceived.put("evening", 0);
-        mapActionsReceived.put("night", 0);
-
-        mapActionsMade.put("morning", 0);
-        mapActionsMade.put("afternoon", 0);
-        mapActionsMade.put("evening", 0);
-        mapActionsMade.put("night", 0);
+        if(path.contains("inbox")) {
+            mapActionsReceived.put("morning", 0);
+            mapActionsReceived.put("afternoon", 0);
+            mapActionsReceived.put("evening", 0);
+            mapActionsReceived.put("night", 0);
+        }
+        else {
+            mapActionsMade.put("morning", 0);
+            mapActionsMade.put("afternoon", 0);
+            mapActionsMade.put("evening", 0);
+            mapActionsMade.put("night", 0);
+        }
 
         if (cursor.moveToFirst()) { // must check the result to prevent exception
             do {
@@ -221,6 +224,8 @@ public class FetchLogs extends AsyncTask<Void, Void, Void> {
                         String dateInMills = cursor.getString(idx);
 
                         hour = Utils.millisToDate(Long.parseLong(dateInMills)).substring(11,13);
+
+                        Log.d("DATAA--->",Utils.millisToDate(Long.parseLong(dateInMills)));
 
                         if(path.contains("sent")){
                             if(Utils.isBetween(Integer.parseInt(hour),6,12)) { //check if the hour is in the morning
@@ -232,7 +237,7 @@ public class FetchLogs extends AsyncTask<Void, Void, Void> {
                             else if (Utils.isBetween(Integer.parseInt(hour),18,22)) { //check if the hour is in the evening
                                 mapActionsMade.put("evening", mapActionsMade.get("evening") + 1); //update the number of incoming calls from the evening
                             }
-                            else if (Utils.isBetween(Integer.parseInt(hour),22,6)) { //check if the hour is in the night
+                            else if (Utils.isBetween(Integer.parseInt(hour),22,24) || Utils.isBetween(Integer.parseInt(hour),0,6) ) { //check if the hour is in the night
                                 mapActionsMade.put("night", mapActionsMade.get("night") + 1); //update the number of incoming calls from the night
                             }
 
