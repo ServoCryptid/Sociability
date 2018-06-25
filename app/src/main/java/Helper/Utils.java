@@ -4,11 +4,13 @@ import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.TimeZone;
 
 import Entities.CallSample;
 import Entities.SMSSample;
@@ -17,10 +19,11 @@ public class Utils {
 
     public static String millisToDate(long currentTime) {
         String finalDate;
+        TimeZone.setDefault(TimeZone.getTimeZone("EEST"));
         Calendar calendar = Calendar.getInstance();
         calendar.setTimeInMillis(currentTime);
         Date date = calendar.getTime();
-        finalDate = date.toString();
+        finalDate = DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT).format(date);
         return finalDate;
     }
 

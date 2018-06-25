@@ -137,7 +137,7 @@ public class FetchLogs extends AsyncTask<Void, Void, Void> {
                     else if (Utils.isBetween(Integer.parseInt(hour),18,22)) { //check if the hour is in the evening
                         mapActionsMade.put("evening", mapActionsMade.get("evening") + 1); //update the number of incoming calls from the evening
                     }
-                    else if (Utils.isBetween(Integer.parseInt(hour),22,6)) { //check if the hour is in the night
+                    else if (Utils.isBetween(Integer.parseInt(hour),22,24)|| Utils.isBetween(Integer.parseInt(hour),0,6)) { //check if the hour is in the night
                         mapActionsMade.put("night", mapActionsMade.get("night") + 1); //update the number of incoming calls from the night
                     }
                     break;
@@ -154,7 +154,7 @@ public class FetchLogs extends AsyncTask<Void, Void, Void> {
                     else if (Utils.isBetween(Integer.parseInt(hour),18,22)) { //check if the hour is in the evening
                         mapActionsReceived.put("evening", mapActionsReceived.get("evening") + 1); //update the number of incoming calls from the evening
                     }
-                    else if (Utils.isBetween(Integer.parseInt(hour),22,6)) { //check if the hour is in the night
+                    else if (Utils.isBetween(Integer.parseInt(hour),22,24)|| Utils.isBetween(Integer.parseInt(hour),0,6)) { //check if the hour is in the night
                         mapActionsReceived.put("night", mapActionsReceived.get("night") + 1); //update the number of incoming calls from the night
                     }
                     break;
@@ -252,7 +252,7 @@ public class FetchLogs extends AsyncTask<Void, Void, Void> {
                             else if (Utils.isBetween(Integer.parseInt(hour),18,22)) { //check if the hour is in the evening
                                 mapActionsReceived.put("evening", mapActionsReceived.get("evening") + 1); //update the number of incoming calls from the evening
                             }
-                            else if (Utils.isBetween(Integer.parseInt(hour),22,6)) { //check if the hour is in the night
+                            else if (Utils.isBetween(Integer.parseInt(hour),22,24)|| Utils.isBetween(Integer.parseInt(hour),0,6)) { //check if the hour is in the night
                                 mapActionsReceived.put("night", mapActionsReceived.get("night") + 1); //update the number of incoming calls from the night
                             }
                         }
